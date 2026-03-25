@@ -122,6 +122,28 @@
 
 ---
 
+**RF-12 — Editar hábito**
+**Descripción:** El sistema debe permitir al usuario autenticado modificar el nombre, descripción y configuración de recordatorio de un hábito existente, siempre que el hábito le pertenezca y el nuevo nombre no esté vacío.
+**Criterios de aceptación:**
+- ✅ Los cambios se reflejan de inmediato en la lista de hábitos tras guardar.
+- ✅ Si se modifica el recordatorio, la notificación local se reprograma con la nueva hora.
+- ✅ Si se desactiva el recordatorio, la notificación local se cancela.
+- ❌ No se acepta guardar si el nombre queda vacío → error de validación.
+- ❌ No se acepta editar un hábito que no pertenece al usuario autenticado → HTTP 403.
+
+---
+
+**RF-13 — Eliminar hábito**
+**Descripción:** El sistema debe permitir al usuario autenticado eliminar un hábito de su lista, eliminando en cascada todas sus completaciones asociadas y cancelando su notificación local, siempre que el hábito le pertenezca.
+**Criterios de aceptación:**
+- ✅ El hábito desaparece de la lista inmediatamente tras confirmarse la eliminación.
+- ✅ Las completaciones asociadas al hábito son eliminadas de la base de datos (cascade).
+- ✅ La notificación local del hábito es cancelada tras la eliminación.
+- ❌ No se acepta eliminar sin confirmación previa del usuario (diálogo de confirmación obligatorio).
+- ❌ No se acepta eliminar un hábito que no pertenece al usuario autenticado → HTTP 403.
+
+---
+
 ### Requerimientos No Funcionales
 
 ---
