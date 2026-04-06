@@ -89,7 +89,7 @@ PORT=3000
 ### How we work
 We use the `university-project-guide` skill — guided step by step, student writes the code, Claude reviews and commits. After each approved step: commit + push + Obsidian notes at `C:\Users\Jerry\Tera\iOS\`.
 
-### Backend progress (as of 2026-04-01)
+### Backend progress (as of 2026-04-06)
 **Done:**
 - `backend/package.json` — npm init, dependencies installed, scripts configured, Jest config
 - `backend/.gitignore` — node_modules, dist, .env
@@ -98,11 +98,11 @@ We use the `university-project-guide` skill — guided step by step, student wri
 - `backend/src/server.ts` — listens on process.env.PORT || 3000
 - `backend/src/types/index.ts` — AuthUser, Habit, HabitCompletion, Profile, PokemonSummary, Express Request augmentation
 - `backend/src/middleware/errorHandler.ts` — 4-param error middleware, responds { error: '...' }
+- `backend/.env.example` + `.env` — Supabase credentials (SUPABASE_URL, SUPABASE_JWT_SECRET usa Legacy JWT Secret, SUPABASE_SERVICE_ROLE_KEY)
+- `backend/src/services/supabase.ts` — Supabase client singleton con service role key
+- `backend/src/middleware/auth.ts` — JWT verification; extrae Bearer token, valida con SUPABASE_JWT_SECRET, adjunta req.user
 
 **Next up (backend):**
-- `backend/.env.example` + `.env` — Supabase credentials
-- `backend/src/services/supabase.ts` — Supabase client singleton
-- `backend/src/middleware/auth.ts` — JWT verification middleware
 - `backend/src/routes/auth.ts` — POST /auth/register, /auth/login
 - `backend/src/routes/habits.ts` — CRUD + POST /habits/:id/complete
 - `backend/src/services/streakService.ts` — streak + coin logic (needs unit tests)
