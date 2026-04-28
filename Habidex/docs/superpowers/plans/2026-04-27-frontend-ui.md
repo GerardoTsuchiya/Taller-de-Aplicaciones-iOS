@@ -509,13 +509,19 @@ export interface Habit {
   reminder_time?: string;
 }
 
+// El backend enriquece GET /habits con estos campos calculados en servidor
+export interface HabitWithStreak extends Habit {
+  streak: number;
+  completedToday: boolean;
+}
+
 export interface CompletionResult {
   coins_earned: number;
   streak: number;
   total_coins: number;
 }
 
-export const getHabits = (): Promise<Habit[]> =>
+export const getHabits = (): Promise<HabitWithStreak[]> =>
   apiFetch('/habits');
 
 export const createHabit = (body: { name: string; description?: string; reminder_enabled: boolean; reminder_time?: string }): Promise<Habit> =>
@@ -536,7 +542,6 @@ export interface HabitStats {
   pct_30d: number;
   streak: number;
   max_streak: number;
-  total: number;
 }
 
 export const getStats = (): Promise<{ habits: HabitStats[]; overall_pct: number; total_completions: number }> =>
@@ -1069,7 +1074,7 @@ export default function TabsLayout() {
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { getHabits, completeHabit, Habit } from '@/api/habits';
+import { getHabits, completeHabit, Habit, HabitWithStreak } from '@/api/habits';
 import { getProfile } from '@/api/profile';
 import { Colors } from '@/constants/theme';
 import GridBackground from '@/components/GridBackground';
@@ -1079,13 +1084,8 @@ import HabitRow from '@/components/HabitRow';
 import PixelText from '@/components/PixelText';
 import PixelButton from '@/components/PixelButton';
 
-interface HabitWithState extends Habit {
-  streak: number;
-  completedToday: boolean;
-}
-
 export default function HabitsScreen() {
-  const [habits, setHabits] = useState<HabitWithState[]>([]);
+  const [habits, setHabits] = useState<HabitWithStreak[]>([]);
   const [coins, setCoins] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -1094,8 +1094,7 @@ export default function HabitsScreen() {
   const load = useCallback(async () => {
     try {
       const [habitsData, profile] = await Promise.all([getHabits(), getProfile()]);
-      // El backend devuelve streak y completedToday junto con cada hábito
-      setHabits(habitsData as HabitWithState[]);
+      setHabits(habitsData);
       setCoins(profile.coins);
     } catch (e: any) {
       Alert.alert('Error', e.message);
@@ -1106,7 +1105,7 @@ export default function HabitsScreen() {
 
   useEffect(() => { load(); }, [load]);
 
-  const handleComplete = async (habit: HabitWithState) => {
+  const handleComplete = async (habit: HabitWithStreak) => {
     if (habit.completedToday) return;
     setSelectedId(habit.id);
     try {

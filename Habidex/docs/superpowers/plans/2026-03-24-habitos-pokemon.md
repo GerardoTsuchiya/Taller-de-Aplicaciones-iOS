@@ -169,7 +169,8 @@ export interface Profile {
 export interface PokemonSummary {
   id: number;
   name: string;
-  sprite: string;
+  sprite_url: string;
+  types: string[];
   caught: boolean;
 }
 
@@ -838,21 +839,88 @@ git commit -m "feat: streak calculation service with TDD"
 import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth';
 import { supabase } from '../services/supabase';
-import { calculateStreak, calculateCoinsEarned } from '../services/streakService';
+import { calculateStreak, calculateCoinsEarned, calculateMaxStreak } from '../services/streakService';
 
 const router = Router();
 router.use(requireAuth);
 
-// GET /habits
+// GET /habits — enriquece cada hábito con streak y completedToday calculados en servidor
+// ⚠️ CORRECCIÓN: el frontend espera { ...habit, streak: number, completedToday: boolean }
 router.get('/', async (req: Request, res: Response) => {
-  const { data, error } = await supabase
+  const userId = req.user!.id;
+  const today = new Date().toISOString().split('T')[0];
+
+  const { data: habits, error } = await supabase
     .from('habits')
     .select('*')
-    .eq('user_id', req.user!.id)
+    .eq('user_id', userId)
     .order('created_at', { ascending: true });
 
   if (error) { res.status(500).json({ error: error.message }); return; }
-  res.json(data);
+
+  // Una sola consulta para todas las completaciones del usuario
+  const { data: completions } = await supabase
+    .from('habit_completions')
+    .select('habit_id, completed_on')
+    .eq('user_id', userId);
+
+  const byHabit: Record<string, string[]> = {};
+  for (const c of completions ?? []) {
+    if (!byHabit[c.habit_id]) byHabit[c.habit_id] = [];
+    byHabit[c.habit_id].push(c.completed_on);
+  }
+
+  const enriched = (habits ?? []).map((h) => {
+    const dates = byHabit[h.id] ?? [];
+    return { ...h, streak: calculateStreak(dates, today), completedToday: dates.includes(today) };
+  });
+
+  res.json(enriched);
+});
+
+// GET /habits/stats
+// ⚠️ CORRECCIÓN: nueva ruta requerida por la pantalla Analytics del frontend
+router.get('/stats', async (req: Request, res: Response) => {
+  const userId = req.user!.id;
+  const today = new Date().toISOString().split('T')[0];
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  const { data: habits, error } = await supabase
+    .from('habits')
+    .select('id, name')
+    .eq('user_id', userId);
+
+  if (error) { res.status(500).json({ error: error.message }); return; }
+
+  const { data: completions } = await supabase
+    .from('habit_completions')
+    .select('habit_id, completed_on')
+    .eq('user_id', userId);
+
+  const byHabit: Record<string, string[]> = {};
+  for (const c of completions ?? []) {
+    if (!byHabit[c.habit_id]) byHabit[c.habit_id] = [];
+    byHabit[c.habit_id].push(c.completed_on);
+  }
+
+  const habitStats = (habits ?? []).map((h) => {
+    const allDates = byHabit[h.id] ?? [];
+    const last30 = allDates.filter((d) => d >= thirtyDaysAgo && d <= today);
+    return {
+      habit_id: h.id,
+      habit_name: h.name,
+      pct_30d: Math.round((last30.length / 30) * 100),
+      streak: calculateStreak(allDates, today),
+      max_streak: calculateMaxStreak(allDates),
+    };
+  });
+
+  const total_completions = (completions ?? []).length;
+  const overall_pct = habitStats.length > 0
+    ? Math.round(habitStats.reduce((sum, h) => sum + h.pct_30d, 0) / habitStats.length)
+    : 0;
+
+  res.json({ habits: habitStats, overall_pct, total_completions });
 });
 
 // POST /habits
@@ -982,20 +1050,32 @@ curl -X POST http://localhost:3000/habits \
   -H "Content-Type: application/json" \
   -d '{"name":"Leer 30 min","reminder_enabled":false}'
 
-# Expected: { id, user_id, name, ... }
+# Expected: { id, user_id, name, reminder_enabled, ... }
+
+# Listar hábitos — verifica que vienen streak y completedToday
+curl http://localhost:3000/habits \
+  -H "Authorization: Bearer $TOKEN"
+
+# Expected: [{ id, name, ..., streak: 0, completedToday: false }]
 
 # Completar hábito (usar el id devuelto)
 curl -X POST http://localhost:3000/habits/<HABIT_ID>/complete \
   -H "Authorization: Bearer $TOKEN"
 
 # Expected: { coins_earned: 10, streak: 1, total_coins: 10 }
+
+# Verificar stats
+curl http://localhost:3000/habits/stats \
+  -H "Authorization: Bearer $TOKEN"
+
+# Expected: { habits: [{ habit_id, habit_name, pct_30d, streak, max_streak }], overall_pct, total_completions }
 ```
 
 - [ ] **Step 3: Commit**
 
 ```bash
 git add backend/src/routes/habits.ts
-git commit -m "feat: habits CRUD and completion endpoint"
+git commit -m "feat: habits CRUD, completion endpoint, stats endpoint"
 ```
 
 ---
@@ -1007,38 +1087,66 @@ git commit -m "feat: habits CRUD and completion endpoint"
 - Create: `backend/src/routes/collection.ts`
 - Create: `backend/src/routes/profile.ts`
 
-- [ ] **Step 1: Crear `backend/src/services/pokemonService.ts`**
+- [ ] **Step 0: Actualizar `PokemonSummary` en `backend/src/types/index.ts`**
+
+⚠️ CORRECCIÓN: el frontend espera `sprite_url` (no `sprite`) y un array `types[]`.
+Abrir `backend/src/types/index.ts` y reemplazar la interfaz `PokemonSummary`:
 
 ```typescript
-// Caches los 151 Pokémon en memoria al primer request
-let cachedPokemon: Array<{ id: number; name: string; sprite: string }> | null = null;
+export interface PokemonSummary {
+  id: number;
+  name: string;
+  sprite_url: string;
+  types: string[];
+  caught: boolean;
+}
+```
 
-async function fetchAllPokemon() {
+- [ ] **Step 1: Crear `backend/src/services/pokemonService.ts`**
+
+⚠️ CORRECCIÓN: usar `sprite_url` en lugar de `sprite`, obtener `types[]` via PokéAPI individual,
+y exportar `getPokemonById` (necesario para que POST /collection/catch devuelva el objeto completo).
+
+```typescript
+export interface PokemonData {
+  id: number;
+  name: string;
+  sprite_url: string;
+  types: string[];
+}
+
+let cachedPokemon: PokemonData[] | null = null;
+
+async function fetchAllPokemon(): Promise<PokemonData[]> {
   if (cachedPokemon) return cachedPokemon;
 
-  const results: Array<{ id: number; name: string; sprite: string }> = [];
+  // Obtener los 151 Pokémon en paralelo (una llamada por Pokémon para obtener types[])
+  const fetches = Array.from({ length: 151 }, (_, i) =>
+    fetch(`https://pokeapi.co/api/v2/pokemon/${i + 1}`).then((r) => r.json())
+  );
+  const details = await Promise.all(fetches);
 
-  // PokéAPI devuelve los primeros 151 con offset=0&limit=151
-  const listRes = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151&offset=0');
-  const list = await listRes.json() as { results: Array<{ name: string; url: string }> };
+  cachedPokemon = details.map((d: any) => ({
+    id: d.id as number,
+    name: d.name as string,
+    sprite_url: d.sprites.front_default as string,
+    types: (d.types as Array<{ type: { name: string } }>).map((t) => t.type.name),
+  }));
 
-  for (let i = 0; i < list.results.length; i++) {
-    const id = i + 1;
-    const name = list.results[i].name;
-    const sprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-    results.push({ id, name, sprite });
-  }
-
-  cachedPokemon = results;
   return cachedPokemon;
 }
 
 export async function getPokemonWithCaughtStatus(
   caughtIds: number[]
-): Promise<Array<{ id: number; name: string; sprite: string; caught: boolean }>> {
+): Promise<Array<PokemonData & { caught: boolean }>> {
   const all = await fetchAllPokemon();
   const caughtSet = new Set(caughtIds);
   return all.map((p) => ({ ...p, caught: caughtSet.has(p.id) }));
+}
+
+export async function getPokemonById(id: number): Promise<PokemonData | null> {
+  const all = await fetchAllPokemon();
+  return all.find((p) => p.id === id) ?? null;
 }
 ```
 
@@ -1048,7 +1156,7 @@ export async function getPokemonWithCaughtStatus(
 import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth';
 import { supabase } from '../services/supabase';
-import { getPokemonWithCaughtStatus } from '../services/pokemonService';
+import { getPokemonWithCaughtStatus, getPokemonById } from '../services/pokemonService';
 
 const CATCH_COST = 50;
 const router = Router();
@@ -1106,7 +1214,10 @@ router.post('/catch', async (req: Request, res: Response) => {
   const remaining = profile.coins - CATCH_COST;
   await supabase.from('profiles').update({ coins: remaining }).eq('id', userId);
 
-  res.json({ pokemon_id, remaining_coins: remaining });
+  // ⚠️ CORRECCIÓN: devolver el objeto Pokémon completo (no solo pokemon_id)
+  // El frontend espera { pokemon: { id, name, sprite_url, types, caught }, remaining_coins }
+  const pokemon = await getPokemonById(pokemon_id);
+  res.json({ pokemon: pokemon ? { ...pokemon, caught: true } : null, remaining_coins: remaining });
 });
 
 export default router;
@@ -1147,7 +1258,7 @@ export default router;
 - [ ] **Step 4: Commit**
 
 ```bash
-git add backend/src/services/pokemonService.ts backend/src/routes/collection.ts backend/src/routes/profile.ts
+git add backend/src/types/index.ts backend/src/services/pokemonService.ts backend/src/routes/collection.ts backend/src/routes/profile.ts
 git commit -m "feat: pokemon service, collection and profile endpoints"
 ```
 
