@@ -41,7 +41,7 @@ collectionRouter.post('/catch', authenticate, async (req: Request, res: Response
   const userId = req.user!.sub;
   const { pokemon_id } = req.body;
 
-  if (!pokemon_id || typeof pokemon_id !== 'number' || pokemon_id < 1 || pokemon_id > 151) {
+  if (typeof pokemon_id !== 'number' || !Number.isInteger(pokemon_id) || pokemon_id < 1 || pokemon_id > 151) {
     res.status(400).json({ error: 'Pokémon inválido. Debe ser un número entre 1 y 151' });
     return;
   }
