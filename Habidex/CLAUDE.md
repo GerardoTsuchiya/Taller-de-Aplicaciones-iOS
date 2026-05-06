@@ -18,7 +18,7 @@ npm run dev          # start dev server with ts-node-dev
 npm run build        # compile TypeScript
 npm start            # run compiled JS
 npm test             # run Jest tests
-npm test -- --testPathPattern=streakService   # run a single test file
+npm test -- --testPathPatterns=streakService   # run a single test file (Jest 30+)
 ```
 
 ### Frontend
