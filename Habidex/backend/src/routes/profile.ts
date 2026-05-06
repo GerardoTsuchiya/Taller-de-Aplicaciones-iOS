@@ -22,7 +22,7 @@ profileRouter.get('/', authenticate, async (req: Request, res: Response) => {
     return;
   }
 
-  const [{ count: habitsCount }, { count: pokemonCount }] = await Promise.all([
+  const [habitsResult, pokemonResult] = await Promise.all([
     supabase
       .from('habits')
       .select('*', { count: 'exact', head: true })
@@ -33,10 +33,15 @@ profileRouter.get('/', authenticate, async (req: Request, res: Response) => {
       .eq('user_id', userId),
   ]);
 
+  if (habitsResult.error || pokemonResult.error) {
+    res.status(500).json({ error: 'Error al obtener conteos del perfil' });
+    return;
+  }
+
   res.json({
     ...profile,
-    habits_count: habitsCount ?? 0,
-    pokemon_caught: pokemonCount ?? 0,
+    habits_count: habitsResult.count ?? 0,
+    pokemon_caught: pokemonResult.count ?? 0,
   });
 });
 
@@ -60,10 +65,15 @@ profileRouter.get('/analytics', authenticate, async (req: Request, res: Response
     return;
   }
 
-  const { data: allCompletions } = await supabase
+  const { data: allCompletions, error: completionsError } = await supabase
     .from('habit_completions')
     .select('habit_id, completed_on')
     .eq('user_id', userId);
+
+  if (completionsError) {
+    res.status(500).json({ error: 'Error al obtener completaciones' });
+    return;
+  }
 
   const completionsByHabit = new Map<string, string[]>();
   for (const c of allCompletions ?? []) {
