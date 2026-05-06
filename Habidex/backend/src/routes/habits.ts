@@ -93,14 +93,20 @@ habitsRouter.delete('/:id', authenticate, async (req: Request, res: Response) =>
   const userId = req.user!.sub;
   const { id } = req.params;
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('habits')
     .delete()
     .eq('id', id)
-    .eq('user_id', userId);
+    .eq('user_id', userId)
+    .select();
 
   if (error) {
     res.status(500).json({ error: 'Error al eliminar hábito' });
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    res.status(404).json({ error: 'Hábito no encontrado' });
     return;
   }
 

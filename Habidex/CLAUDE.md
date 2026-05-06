@@ -93,7 +93,7 @@ Trigger `on_auth_user_created` crea automáticamente un registro en `profiles` a
 | GET | `/collection/available` | Sí | 151 Pokémon con `caught: true/false` |
 | POST | `/collection/catch` | Sí | Capturar Pokémon → body: `{ pokemon_id }` (entero 1-151) |
 | GET | `/profile` | Sí | Perfil + `habits_count` + `pokemon_caught` |
-| GET | `/analytics` | Sí | Stats por hábito: rate, current_streak, max_streak, overall_rate |
+| GET | `/profile/analytics` | Sí | Stats por hábito: rate, current_streak, max_streak, overall_rate |
 
 **Auth header:** `Authorization: Bearer <access_token>` (el token viene de `session.access_token` en login/register).
 
@@ -116,6 +116,8 @@ PORT=3000
 - **Notifications are local only** — `expo-notifications`, no push server needed
 - **Error messages in Spanish** — all API error responses: `{ "error": "..." }`
 - **req.user.sub** — siempre usar `.sub` (no `.id`) para obtener el UUID del usuario en routes
+- **JWT ES256** — Supabase firma tokens con ES256 (ECDSA). El middleware de auth verifica con la clave pública del JWKS endpoint (`/auth/v1/.well-known/jwks.json`), cacheada en memoria. NO usar `SUPABASE_JWT_SECRET` para `jwt.verify` — ese era el secreto legacy HS256 y ya no aplica.
+- **DELETE ownership check** — `DELETE /habits/:id` usa `.select()` en el query de Supabase para verificar que realmente se eliminó una fila; si retorna vacío → 404 (Supabase no devuelve error al borrar 0 filas)
 
 ## Docs
 
@@ -124,30 +126,27 @@ PORT=3000
 - Plan frontend UI: `docs/superpowers/plans/2026-04-21-frontend-ui.md` (pendiente)
 - Plan de pruebas: `iOS_Plan-Pruebas.pdf` (en raíz del monorepo)
 
-## Estado del Proyecto (2026-05-05)
+## Estado del Proyecto (2026-05-06)
 
-### Backend — COMPLETO ✅
-Todo implementado y probado (TypeScript sin errores, 17 unit tests pasando):
+### Backend — COMPLETO + PROBADO ✅
+Todo implementado, probado con plan de pruebas automatizado (37/37 pasaron):
 - Auth (register/login)
 - Hábitos (CRUD + completación con streaks + historial)
 - Pokémon (caché en memoria + pokédex + captura)
 - Perfil + analíticas
 - Base de datos creada en Supabase
+- 17 unit tests pasando (`streakService`)
 
-### Siguiente paso inmediato: Ejecutar Plan de Pruebas
-El plan de pruebas (`iOS_Plan-Pruebas.pdf`) tiene 17 casos de prueba (CP-01 a CP-07).
-Con el backend completo se pueden ejecutar **14/17** con Postman/Insomnia:
-- CP-01 a CP-02: Auth (register/login)
-- CP-03: Gestión de hábitos
-- CP-04: Completación, streaks y monedas
-- CP-05: **NO ejecutable** — notificaciones locales requieren la app iOS
-- CP-06: Calendarios y analíticas (via GET /analytics y GET /habits/:id/completions)
-- CP-07: Pokédex y captura
+**Bugs encontrados y corregidos durante el plan de pruebas (2026-05-06):**
+1. `middleware/auth.ts` — Supabase migró a ES256 (ECDSA). Actualizado a JWKS verification con clave pública cacheada.
+2. `routes/habits.ts` DELETE — no verificaba si realmente eliminó alguna fila; ahora retorna 404 si el hábito no existe o es ajeno.
+3. `routes/profile.ts` GET analytics — ruta correcta es `/profile/analytics` (no `/analytics`); CLAUDE.md y tests actualizados.
 
-**Flujo para probar en Postman:**
-1. `POST /auth/register` → guarda el `session.access_token`
-2. Usar ese token como `Bearer` en todos los demás requests
-3. Crear hábitos → completarlos → verificar monedas → capturar Pokémon
+**Script de pruebas automatizado:** `backend/test-plan.js` — corre todos los 37 casos via API (Node.js nativo).
+
+### Plan de Pruebas — EJECUTADO ✅
+- 37/37 casos ejecutados vía API pasaron
+- CP-02.1 + CP-05/05.1/05.2 pendientes (requieren app iOS)
 
 ### Frontend — PENDIENTE
 El frontend en Expo/React Native no ha sido implementado aún.
