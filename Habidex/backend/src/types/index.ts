@@ -1,7 +1,7 @@
 //Aqui defino las interfaces que el backend usara
 
 interface AuthUser {
-    id: string;
+    sub: string;   // UUID del usuario en Supabase (campo estándar JWT)
     email: string;
 }
 
