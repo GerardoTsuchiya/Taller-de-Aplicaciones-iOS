@@ -78,8 +78,10 @@ habitsRouter.put('/:id', authenticate, async (req: Request, res: Response) => {
     .select()
     .single();
 
-  if (error || !data) {
-    res.status(404).json({ error: 'Hábito no encontrado' });
+  if (error) {
+    const status = error.code === 'PGRST116' ? 404 : 500;
+    const message = status === 404 ? 'Hábito no encontrado' : 'Error al actualizar hábito';
+    res.status(status).json({ error: message });
     return;
   }
 
@@ -141,7 +143,8 @@ habitsRouter.post('/:id/complete', authenticate, async (req: Request, res: Respo
   const { data: history } = await supabase
     .from('habit_completions')
     .select('completed_on')
-    .eq('habit_id', id);
+    .eq('habit_id', id)
+    .eq('user_id', userId);
 
   const completedDates = (history ?? []).map((c: { completed_on: string }) => c.completed_on);
   completedDates.push(today);
@@ -156,23 +159,35 @@ habitsRouter.post('/:id/complete', authenticate, async (req: Request, res: Respo
     .insert({ habit_id: id, user_id: userId, completed_on: today });
 
   if (insertError) {
-    res.status(500).json({ error: 'Error al registrar completación' });
+    const status = insertError.code === '23505' ? 409 : 500;
+    const message = status === 409 ? 'El hábito ya fue completado hoy' : 'Error al registrar completación';
+    res.status(status).json({ error: message });
     return;
   }
 
   // Actualiza coins en profiles
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('coins')
     .eq('id', userId)
     .single();
 
-  const newCoins = (profile?.coins ?? 0) + coinsEarned;
+  if (profileError || !profile) {
+    res.status(500).json({ error: 'Error al obtener perfil del usuario' });
+    return;
+  }
 
-  await supabase
+  const newCoins = profile.coins + coinsEarned;
+
+  const { error: updateError } = await supabase
     .from('profiles')
     .update({ coins: newCoins })
     .eq('id', userId);
+
+  if (updateError) {
+    res.status(500).json({ error: 'Error al actualizar monedas' });
+    return;
+  }
 
   res.json({
     streak,
