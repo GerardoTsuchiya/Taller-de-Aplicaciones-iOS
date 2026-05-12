@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Habidex",
+    "slug": "habidex",
+    "version": "1.0.0",
+    "scheme": "habidex",
+    "newArchEnabled": true,
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#08080f"
+    },
+    "web": { "bundler": "metro" },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-notifications",
+        { "icon": "./assets/icon.png", "color": "#cc0000" }
+      ]
+    ],
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#08080f"
+      }
+    },
+    "ios": { "supportsTablet": false }
+  }
+}
