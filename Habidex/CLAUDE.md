@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Habidex is a mobile habit-tracking app with Pokémon gamification. Users complete daily habits, earn coins, and spend them to catch Pokémon in a Gen 1 Pokédex.
 
-**Monorepo structure:** `backend/` (Node.js/Express/TypeScript REST API) + `frontend/` (Expo/React Native/TypeScript — pendiente de implementar).
+**Monorepo structure:** `backend/` (Node.js/Express/TypeScript REST API) + `frontend/` (Expo/React Native/TypeScript — implementado, estilo Pixel Neon).
 
 ## Commands
 
@@ -21,7 +21,7 @@ npm test             # run Jest tests (17 tests, todos pasando)
 npm test -- --testPathPatterns=streakService   # run a single test file (Jest 30+)
 ```
 
-### Frontend (pendiente)
+### Frontend
 ```bash
 cd frontend
 npm install
@@ -54,12 +54,38 @@ Two tsconfig files to avoid `rootDir` conflict with tests:
 - `tsconfig.json` — used for type-checking and ts-jest (includes `src/` and `tests/`)
 - `tsconfig.build.json` — used for `npm run build` (only `src/`, sets `rootDir: "./src"`)
 
-### Frontend (`frontend/` — pendiente de implementar)
-- `app/` — Expo Router file-based routing: `(auth)/` stack for unauthenticated, `(tabs)/` for authenticated
-- `app/_layout.tsx` — root layout + auth guard (redirects based on Zustand token state)
-- `src/api/client.ts` — base fetch wrapper that injects the JWT header
-- `src/store/authStore.ts` — Zustand store: `token`, `user`, `login()`, `logout()`
-- `src/utils/notifications.ts` — `scheduleHabitNotification()`, `cancelNotification()`, `rescheduleAll()` using `expo-notifications`
+### Frontend (`frontend/` — COMPLETO, estilo Pixel Neon)
+
+**Pantallas (`app/`):**
+- `_layout.tsx` — root layout: carga fuente PressStart2P, auth guard con Zustand + hydrate
+- `(auth)/login.tsx`, `(auth)/register.tsx` — pantallas de autenticación
+- `(tabs)/index.tsx` — lista de hábitos con streaks y botón completar
+- `(tabs)/pokedex.tsx` — Pokédex 151 con modal de captura
+- `(tabs)/stats.tsx` — analíticas con DonutChart y barras por hábito
+- `(tabs)/profile.tsx` — perfil con stats y logout
+- `completado.tsx` — modal recompensa al completar hábito
+- `atrapar/[id].tsx` — modal captura de Pokémon
+- `habito.tsx` — modal crear/editar hábito
+
+**API (`src/api/`):**
+- `client.ts` — base fetch wrapper que inyecta JWT; maneja 401 con auto-logout
+- `habits.ts` — llamadas a `/habits` y `/habits/:id/complete`
+- `profile.ts` — llamadas a `/profile` y `/profile/analytics`
+- `collection.ts` — llamadas a `/collection/available` y `/collection/catch`
+
+**Stores (`src/store/`):**
+- `authStore.ts` — Zustand: `token`, `user`, `hydrated`; persiste en `expo-secure-store`
+- `coinsStore.ts` — Zustand: `coins`, `setCoins`; estado global de monedas
+
+**Componentes (`src/components/`):**
+- Design system: `PixelText`, `PixelButton`, `PixelInput`, `GridBackground`
+- Hábitos: `HabitRow`, `WeekDots`, `StreakBox`, `RewardBox`
+- Pokédex: `PokemonCell`
+- Perfil/Stats: `StatBox`, `DonutChart`, `HabitBar`, `AppHeader`
+
+**Constantes:**
+- `constants/api.ts` — `API_BASE_URL` (cambiar a IP local para desarrollo)
+- `src/constants/theme.ts` — `Colors`, tipografía Pixel Neon
 
 ### Database (Supabase/PostgreSQL) — CREADA el 2026-05-05
 Cuatro tablas ya existentes en Supabase:
@@ -123,10 +149,10 @@ PORT=3000
 
 - Spec & requirements: `docs/superpowers/specs/2026-03-24-habitos-pokemon-design.md`
 - Plan de implementación backend: `docs/superpowers/plans/2026-05-05-backend-completo.md`
-- Plan frontend UI: `docs/superpowers/plans/2026-04-21-frontend-ui.md` (pendiente)
+- Plan frontend UI: `docs/superpowers/plans/2026-04-21-frontend-ui.md`
 - Plan de pruebas: `iOS_Plan-Pruebas.pdf` (en raíz del monorepo)
 
-## Estado del Proyecto (2026-05-06)
+## Estado del Proyecto (2026-05-18)
 
 ### Backend — COMPLETO + PROBADO ✅
 Todo implementado, probado con plan de pruebas automatizado (37/37 pasaron):
@@ -148,7 +174,10 @@ Todo implementado, probado con plan de pruebas automatizado (37/37 pasaron):
 - 37/37 casos ejecutados vía API pasaron
 - CP-02.1 + CP-05/05.1/05.2 pendientes (requieren app iOS)
 
-### Frontend — PENDIENTE
-El frontend en Expo/React Native no ha sido implementado aún.
-Mockups diseñados (estilo Pixel Neon) en `Habidex/.superpowers/brainstorm/`.
-Plan de implementación frontend pendiente de redactar.
+### Frontend — COMPLETO ✅
+7 pantallas Pixel Neon implementadas en Expo/React Native, conectadas al backend:
+- Auth: login + registro
+- Tabs: hábitos, pokédex, stats, perfil
+- Modales: completado, captura Pokémon, crear/editar hábito
+- Design system completo (PixelText, PixelButton, PixelInput, GridBackground)
+- Fuente: PressStart2P (Google Fonts)
