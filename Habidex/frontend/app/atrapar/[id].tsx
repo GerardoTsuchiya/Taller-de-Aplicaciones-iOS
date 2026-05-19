@@ -1,23 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getAvailable, catchPokemon, Pokemon } from '@/api/collection';
+import { getProfile } from '@/api/profile';
+import { isUnauthorizedError } from '@/api/client';
+import { useCoinsStore } from '@/store/coinsStore';
 import { Colors } from '@/constants/theme';
 import GridBackground from '@/components/GridBackground';
 import PixelText from '@/components/PixelText';
 import PixelButton from '@/components/PixelButton';
 
 export default function AtraparModal() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, coins: coinsParam } = useLocalSearchParams<{ id: string; coins?: string }>();
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
+  const { coins, setCoins } = useCoinsStore();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    getAvailable().then(list => {
-      setPokemon(list.find(p => p.id === Number(id)) ?? null);
-    });
-  }, [id]);
+    const initialCoins = Number(coinsParam);
+    if (coinsParam !== undefined && !Number.isNaN(initialCoins)) {
+      setCoins(initialCoins);
+    }
+
+    Promise.all([getAvailable(), getProfile()])
+      .then(([list, profile]) => {
+        setPokemon(list.find(p => p.id === Number(id)) ?? null);
+        setCoins(profile.coins);
+      })
+      .catch(e => {
+        if (isUnauthorizedError(e)) return;
+        Alert.alert('Error', e.message);
+      });
+  }, [id, coinsParam, setCoins]);
 
   const handleCatch = async () => {
     if (!pokemon) return;
@@ -29,7 +46,9 @@ export default function AtraparModal() {
         `${pokemon.name.toUpperCase()} fue capturado.\nMonedas restantes: ${result.remaining_coins}`,
         [{ text: 'OK', onPress: () => router.back() }]
       );
+      setCoins(result.remaining_coins);
     } catch (e: any) {
+      if (isUnauthorizedError(e)) return;
       Alert.alert('Error', e.message);
     } finally {
       setLoading(false);
@@ -41,13 +60,14 @@ export default function AtraparModal() {
   }
 
   const numStr = `#${String(pokemon.id).padStart(3, '0')}`;
+  const types = pokemon.types.length > 0 ? pokemon.types : ['desconocido'];
 
   return (
     <View style={styles.screen}>
       <GridBackground />
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <PixelText size={11} color={Colors.redGlow} glow="red" onPress={() => router.back()}>◄ VOLVER</PixelText>
-        <PixelText size={11} color={Colors.gold} glow="gold">💰 50 PTS</PixelText>
+        <PixelText size={11} color={Colors.gold} glow="gold">💰 {coins} PTS</PixelText>
       </View>
       <View style={styles.content}>
         <View style={styles.ring}>
@@ -57,13 +77,18 @@ export default function AtraparModal() {
         <PixelText size={11} color={Colors.redGlow} glow="red" style={styles.num}>{numStr}</PixelText>
         <PixelText size={17} color="#ffffff" style={styles.name}>{pokemon.name.toUpperCase()}</PixelText>
         <View style={styles.types}>
-          {pokemon.types.map(t => (
+          {types.map(t => (
             <View key={t} style={styles.badge}>
               <PixelText size={8} color={Colors.redGlow}>{t.toUpperCase()}</PixelText>
             </View>
           ))}
         </View>
         <PixelText size={11} color={Colors.gold} glow="gold" style={styles.cost}>💰 COSTO: 50 MONEDAS</PixelText>
+        {coins < 50 && (
+          <PixelText size={8} color={Colors.redGlow} glow="red" style={styles.warning}>
+            MONEDAS INSUFICIENTES
+          </PixelText>
+        )}
         <PixelButton label="► ATRAPAR POKÉMON" onPress={handleCatch} disabled={loading} style={styles.btnPrimary} />
         <PixelButton label="CANCELAR" onPress={() => router.back()} variant="outline" />
       </View>
@@ -76,7 +101,7 @@ const styles = StyleSheet.create({
   header: {
     borderBottomWidth: 2, borderBottomColor: Colors.red,
     backgroundColor: Colors.headerBg,
-    paddingHorizontal: 16, paddingVertical: 12,
+    paddingHorizontal: 16, paddingBottom: 12,
     flexDirection: 'row', justifyContent: 'space-between',
   },
   content: { flex: 1, padding: 20, alignItems: 'center', justifyContent: 'center' },
@@ -100,5 +125,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(204,0,0,0.5)', paddingHorizontal: 10, paddingVertical: 4,
   },
   cost: { marginBottom: 16 },
+  warning: { marginTop: -8, marginBottom: 12 },
   btnPrimary: { marginBottom: 8 },
 });

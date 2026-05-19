@@ -2,8 +2,10 @@ import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { View, ActivityIndicator } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/store/authStore';
 import { Colors } from '@/constants/theme';
+import '@/services/reminders';
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({ PressStart2P_400Regular });
@@ -29,11 +31,14 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="completado" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="atrapar/[id]" options={{ presentation: 'modal' }} />
-    </Stack>
+    <SafeAreaProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="completado" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="atrapar/[id]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="habito" options={{ presentation: 'modal' }} />
+      </Stack>
+    </SafeAreaProvider>
   );
 }

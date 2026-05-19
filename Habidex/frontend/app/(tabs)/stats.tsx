@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
-import { getAnalytics, Analytics } from '@/api/profile';
+import { useFocusEffect } from 'expo-router';
+import { getAnalytics, getProfile, Analytics } from '@/api/profile';
+import { isUnauthorizedError } from '@/api/client';
+import { useCoinsStore } from '@/store/coinsStore';
 import { Colors } from '@/constants/theme';
 import GridBackground from '@/components/GridBackground';
 import AppHeader from '@/components/AppHeader';
@@ -10,12 +13,24 @@ import HabitBar from '@/components/HabitBar';
 
 export default function StatsScreen() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const { coins, setCoins } = useCoinsStore();
 
-  useEffect(() => {
-    getAnalytics()
-      .then(setAnalytics)
-      .catch(e => Alert.alert('Error', e.message));
-  }, []);
+  const load = useCallback(async () => {
+    try {
+      const [analyticsData, profile] = await Promise.all([getAnalytics(), getProfile()]);
+      setAnalytics(analyticsData);
+      setCoins(profile.coins);
+    } catch (e: any) {
+      if (isUnauthorizedError(e)) return;
+      Alert.alert('Error', e.message);
+    }
+  }, [setCoins]);
+
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   const overall = analytics?.overall_rate ?? 0;
   const totalHabits = analytics?.total_habits ?? 0;
@@ -24,8 +39,9 @@ export default function StatsScreen() {
   return (
     <View style={styles.screen}>
       <GridBackground />
-      <AppHeader title="★ ANALYTICS" right={<PixelText size={9} color={Colors.textSecondary}>ÚLT. 30 DÍAS</PixelText>} />
+      <AppHeader title="★ ANALYTICS" coins={coins} />
       <ScrollView contentContainerStyle={styles.scroll}>
+        <PixelText size={8} color={Colors.textSecondary} style={styles.period}>ÚLT. 30 DÍAS</PixelText>
 
         <View style={styles.comboRow}>
           <DonutChart pct={overall} size={90} />
@@ -58,6 +74,7 @@ export default function StatsScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: Colors.bg },
   scroll: { padding: 14 },
+  period: { textAlign: 'right', marginBottom: 8 },
   comboRow: {
     backgroundColor: '#0a0a0f', borderWidth: 1,
     borderColor: Colors.border, padding: 12,

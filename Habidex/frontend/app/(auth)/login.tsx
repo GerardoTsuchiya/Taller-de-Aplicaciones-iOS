@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { apiFetch } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
 import { Colors } from '@/constants/theme';
@@ -10,14 +11,15 @@ import PixelInput from '@/components/PixelInput';
 import PixelButton from '@/components/PixelButton';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuthStore();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!identifier || !password) {
       Alert.alert('Error', 'Completa todos los campos');
       return;
     }
@@ -26,12 +28,12 @@ export default function LoginScreen() {
       // Backend devuelve { user: SupabaseUser, session: { access_token, ... } }
       const { user: authUser, session } = await apiFetch('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier, password }),
       });
       await login(session.access_token, {
         id: authUser.id,
         email: authUser.email,
-        username: authUser.email,
+        username: authUser.username,
       });
       router.replace('/(tabs)');
     } catch (e: any) {
@@ -44,15 +46,18 @@ export default function LoginScreen() {
   return (
     <View style={styles.screen}>
       <GridBackground />
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
+      <ScrollView
+        contentContainerStyle={[styles.scroll, { paddingBottom: Math.max(40, insets.bottom + 24) }]}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
           <PixelText size={13} glow="red">★ HABIDEX</PixelText>
         </View>
         <View style={styles.logoArea}>
           <PixelText size={20} glow="red" style={styles.logoText}>★ HABIDEX ★</PixelText>
           <PixelText size={9} color={Colors.redGlow} glow="red" style={styles.logoSub}>HABIT TRAINER</PixelText>
         </View>
-        <PixelInput label="CORREO" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+        <PixelInput label="USUARIO O CORREO" value={identifier} onChangeText={setIdentifier} autoCapitalize="none" />
         <PixelInput label="CONTRASEÑA" value={password} onChangeText={setPassword} secureTextEntry />
         <PixelButton label="► INICIAR SESIÓN" onPress={handleLogin} disabled={loading} style={styles.btnTop} />
         <PixelText size={9} color="#1e1e30" style={styles.divider}>── ─ ──</PixelText>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habidex — Todas las Pantallas v3 (HIG)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #06060d;
+  min-height: 100vh;
+  padding: 40px 32px 80px;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.page-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px; color: #fff; letter-spacing: 4px;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(230,57,70,0.6);
+  margin-bottom: 8px;
+}
+.page-sub {
+  text-align: center; font-size: 13px; color: #444;
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.page-hig {
+  text-align: center; font-size: 11px; color: #2a2a3e;
+  letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 48px;
+  font-family: 'Press Start 2P', monospace;
+}
+.page-hig span { color: #4ade80; text-shadow: 0 0 8px rgba(74,222,128,0.5); }
+
+.screens-grid {
+  display: flex; flex-wrap: wrap;
+  gap: 40px 28px;
+  justify-content: center;
+}
+
+.screen-slot {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 12px;
+}
+.screen-num   { font-family:'Press Start 2P',monospace; font-size:7px; color:#e63946; letter-spacing:3px; text-shadow:0 0 8px rgba(230,57,70,0.6); }
+.screen-title { font-family:'Press Start 2P',monospace; font-size:8px; color:#c8c8d8; letter-spacing:2px; }
+
+/* ── Phone shell — altura real iPhone 14 (390×844pt a escala 212px) ── */
+.phone {
+  width: 212px; height: 459px;           /* 844pt × (212/390) = 459px */
+  border-radius: 36px; overflow: hidden;
+  border: 3px solid #1a1a2e;
+  box-shadow: 0 0 0 1px rgba(230,57,70,0.12), 0 20px 60px rgba(0,0,0,0.8), 0 0 50px rgba(230,57,70,0.08);
+  position: relative;
+}
+.phone-scroll { height: 459px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+.phone-scroll::-webkit-scrollbar { display: none; }
+
+.bg {
+  width:100%; background:#08080f; font-family:'Press Start 2P',monospace; position:relative;
+  min-height: 459px;
+  display: flex; flex-direction: column;
+}
+.grid-bg {
+  position:absolute; inset:0;
+  background-image: linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);
+  background-size: 18px 18px; pointer-events:none; z-index:0;
+}
+.glow { position:absolute; top:-40px; left:50%; transform:translateX(-50%); width:300px; height:150px; pointer-events:none; z-index:0; }
+.glow-r { background:radial-gradient(ellipse, rgba(204,0,0,0.2) 0%, transparent 68%); }
+.glow-g { background:radial-gradient(ellipse, rgba(74,222,128,0.2) 0%, transparent 68%); }
+.z1 { position:relative; z-index:1; }
+
+/* ── Status bar (HIG: 59pt ≈ 32px a esta escala) ── */
+.statusbar {
+  height: 32px; background: #08080f;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px;
+  position: sticky; top: 0; z-index: 11;
+  flex-shrink: 0;
+}
+.sb-time  { font-family:'Press Start 2P',monospace; font-size:5px; color:#c8c8d8; letter-spacing:1px; }
+.sb-icons { font-family:'Rajdhani',sans-serif; font-size:10px; color:#c8c8d8; letter-spacing:1px; font-weight:600; }
+
+/* Header */
+.hdr {
+  background:#110000; border-bottom:2px solid #cc0000;
+  padding:10px 13px; display:flex; justify-content:space-between; align-items:center;
+  position:sticky; top:32px; z-index:10;          /* sticky debajo de status bar */
+  flex-shrink: 0;
+}
+.hdr::after { content:''; position:absolute; bottom:-5px; left:0; right:0; height:5px; background:radial-gradient(ellipse at center,rgba(204,0,0,0.4) 0%,transparent 70%); pointer-events:none; }
+.hdr-logo  { font-size:7px; color:#fff; letter-spacing:2px; text-shadow:0 0 10px rgba(230,57,70,0.8); }
+.hdr-coins { font-size:6px; color:#ffd700; text-shadow:0 0 8px rgba(255,215,0,0.8); letter-spacing:1px; }
+.hdr-back  { font-size:6px; color:#e63946; text-shadow:0 0 6px rgba(230,57,70,0.7); }
+.hdr-range { font-size:5px; color:#b0b0c4; letter-spacing:1px; }
+
+/* Tabs (HIG: 49pt mínimo ≈ 27px; sticky sobre home indicator) */
+.tabs {
+  background:#080810; border-top:2px solid #1a1a2a;
+  display:flex; justify-content:space-around; padding:8px 0 8px;  /* ~29px total */
+  position:sticky; bottom:18px; z-index:10;
+  flex-shrink: 0;
+}
+.tab    { font-size:5px; color:#b0b0c4; text-align:center; line-height:2.2; letter-spacing:1px; }
+.tab.on { color:#e63946; text-shadow:0 0 8px rgba(230,57,70,0.7); }
+
+/* Home indicator (HIG: 34pt ≈ 18px; zona reservada del sistema) */
+.homebar {
+  height: 18px; background: #08080f;
+  display: flex; align-items: center; justify-content: center;
+  position: sticky; bottom: 0; z-index: 9;
+  flex-shrink: 0;
+}
+.home-pill { width:60px; height:4px; background:#c8c8d8; border-radius:2px; opacity:0.35; }
+
+/* Shared elements */
+.date-row { font-size:6px; color:#c8c8d8; letter-spacing:2px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid #151525; }
+.streak-box {
+  background:#0e0000; border:1px solid #cc0000; border-right-color:#600000; border-bottom-color:#600000;
+  padding:7px 9px; margin-bottom:11px; display:flex; justify-content:space-between; align-items:center;
+  box-shadow:0 0 10px rgba(204,0,0,0.2);
+}
+.s-lbl { font-size:5px; color:#e63946; text-shadow:0 0 8px rgba(230,57,70,0.7); letter-spacing:1px; }
+.s-val { font-size:5px; color:#ffd700; text-shadow:0 0 8px rgba(255,215,0,0.8); letter-spacing:1px; }
+
+/* Habits — min-height 44pt ≈ 24px (touch target HIG) */
+.habit { background:#0a0a0f; border:1px solid #1e1e30; padding:7px 9px; margin-bottom:5px; min-height:24px; }
+.habit.done { border-color:#1a3a1a; box-shadow:0 0 8px rgba(74,222,128,0.08); }
+.h-name { font-size:5px; color:#666; letter-spacing:1px; margin-bottom:5px; display:flex; justify-content:space-between; }
+.habit.done .h-name { color:#4ade80; text-shadow:0 0 6px rgba(74,222,128,0.5); }
+.chk { font-size:7px; color:#4ade80; text-shadow:0 0 10px rgba(74,222,128,0.9); }
+.dots { display:flex; gap:3px; }
+.dot   { width:5px; height:5px; background:#cc0000; box-shadow:0 0 5px rgba(204,0,0,0.7); }
+.dot.e { background:#181828; box-shadow:none; }
+.habit.done .dot   { background:#4ade80; box-shadow:0 0 5px rgba(74,222,128,0.7); }
+.habit.done .dot.e { background:#181828; box-shadow:none; }
+
+/* Buttons — min-height 44pt ≈ 24px (touch target HIG) */
+.btn-r {
+  background:#cc0000; border:0; border-bottom:3px solid #700000; border-right:2px solid #700000;
+  color:#fff; font-family:'Press Start 2P',monospace; font-size:5px; padding:9px 0; width:100%;
+  text-align:center; letter-spacing:2px; cursor:pointer; box-shadow:0 0 12px rgba(204,0,0,0.4);
+  min-height:24px;
+}
+.btn-out {
+  background:transparent; border:1px solid #cc0000; color:#e63946;
+  font-family:'Press Start 2P',monospace; font-size:5px; padding:8px 0; width:100%;
+  text-align:center; letter-spacing:2px; cursor:pointer;
+  min-height:24px;
+}
+.input-lbl { font-size:5px; color:#b0b0c4; letter-spacing:1px; margin-bottom:4px; display:block; }
+.input-px {
+  background:#0d0d18; border:1px solid #2a2a44; border-right-color:#111; border-bottom-color:#111;
+  padding:7px 9px; width:100%; color:#c8c8d8; font-family:'Press Start 2P',monospace;
+  font-size:5px; letter-spacing:1px; margin-bottom:7px; outline:none;
+  min-height:24px;
+}
+.sec-lbl { font-size:5px; color:#b0b0c4; letter-spacing:2px; margin-bottom:8px; padding-bottom:5px; border-bottom:1px solid #151525; }
+
+/* ── SCREEN-SPECIFIC ── */
+
+/* Login */
+.login-logo { font-size:11px; color:#fff; letter-spacing:3px; text-align:center; margin-bottom:5px; text-shadow:0 0 16px rgba(230,57,70,0.8); }
+.login-sub  { font-size:5px; color:#e63946; text-align:center; letter-spacing:3px; margin-bottom:18px; text-shadow:0 0 8px rgba(230,57,70,0.6); }
+.login-div  { font-size:5px; color:#1e1e30; text-align:center; margin:9px 0; letter-spacing:2px; }
+.login-reg  { font-size:5px; color:#5a5a7a; text-align:center; margin-bottom:6px; letter-spacing:1px; }
+
+/* Complete */
+.big-ring {
+  width:64px; height:64px; border-radius:50%;
+  border:2px solid rgba(74,222,128,0.5); background:rgba(74,222,128,0.08);
+  display:flex; align-items:center; justify-content:center; margin-bottom:12px;
+  box-shadow:0 0 20px rgba(74,222,128,0.3), 0 0 50px rgba(74,222,128,0.1);
+}
+.big-chk { font-size:20px; color:#4ade80; text-shadow:0 0 16px rgba(74,222,128,1); }
+.comp-title { font-size:8px; color:#4ade80; text-shadow:0 0 10px rgba(74,222,128,0.8); letter-spacing:2px; margin-bottom:6px; text-align:center; }
+.comp-habit { font-size:5px; color:#888; letter-spacing:1px; margin-bottom:14px; text-align:center; }
+.reward-row { display:flex; gap:8px; margin-bottom:13px; }
+.rew-box {
+  flex:1; background:#0e0e00; border:1px solid #806000; border-right-color:#403000; border-bottom-color:#403000;
+  padding:7px 6px; text-align:center; box-shadow:0 0 8px rgba(255,215,0,0.12);
+}
+.rew-v { font-size:9px; color:#ffd700; text-shadow:0 0 10px rgba(255,215,0,0.9); display:block; line-height:1; margin-bottom:3px; }
+.rew-l { font-size:4px; color:#806000; letter-spacing:1px; }
+.rew-box.r-box { background:#0e0000; border-color:#cc0000; border-right-color:#600000; border-bottom-color:#600000; box-shadow:0 0 8px rgba(204,0,0,0.12); }
+.rew-box.r-box .rew-v { color:#e63946; text-shadow:0 0 10px rgba(230,57,70,0.9); font-size:8px; }
+.rew-box.r-box .rew-l { color:#600000; }
+
+/* Pokédex — celdas con sprite 32px ya cumplen 44pt de touch target */
+.poke-hrow { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px; }
+.poke-tit  { font-size:7px; color:#fff; letter-spacing:2px; text-shadow:0 0 8px rgba(230,57,70,0.5); }
+.poke-cnt  { font-size:5px; color:#4ade80; text-shadow:0 0 6px rgba(74,222,128,0.6); }
+.poke-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:4px; }
+.poke-cell { background:#0d0d18; border:1px solid #1e1e30; padding:4px 3px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:1px; }
+.poke-cell.caught { border-color:#1a3a1a; box-shadow:0 0 6px rgba(74,222,128,0.08); }
+.poke-cell.caught .poke-num { color:#4ade80; text-shadow:0 0 5px rgba(74,222,128,0.7); }
+.poke-cell.caught .poke-name { color:#4ade80; }
+.poke-sprite { width:32px; height:32px; image-rendering:pixelated; }
+.poke-sprite.locked { filter:brightness(0.1) saturate(0); }
+.poke-num  { font-size:4px; color:#333; letter-spacing:1px; }
+.poke-name { font-size:4px; color:#444; }
+
+/* Catch */
+.catch-ring {
+  width:80px; height:80px; border-radius:50%;
+  border:2px solid rgba(204,0,0,0.4); background:rgba(204,0,0,0.05);
+  display:flex; align-items:center; justify-content:center; margin-bottom:8px;
+  box-shadow:0 0 18px rgba(204,0,0,0.2);
+  position:relative;
+}
+.catch-ring::before { content:''; position:absolute; width:56px; height:56px; border-radius:50%; border:1px solid rgba(204,0,0,0.18); }
+.catch-sprite { width:66px; height:66px; image-rendering:pixelated; }
+.catch-num  { font-size:6px; color:#e63946; text-shadow:0 0 8px rgba(230,57,70,0.6); letter-spacing:2px; margin-bottom:4px; }
+.catch-name { font-size:9px; color:#fff; letter-spacing:2px; margin-bottom:5px; }
+.type-row   { display:flex; gap:5px; margin-bottom:10px; }
+.badge { font-size:4px; letter-spacing:1px; padding:3px 7px; }
+.badge-fire { background:rgba(204,0,0,0.2); border:1px solid rgba(204,0,0,0.5); color:#e63946; }
+.badge-fly  { background:rgba(90,90,200,0.2); border:1px solid rgba(90,90,200,0.5); color:#9090dd; }
+.cost { font-size:6px; color:#ffd700; text-shadow:0 0 8px rgba(255,215,0,0.6); margin-bottom:10px; }
+
+/* Profile */
+.prof-avatar-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.avatar {
+  width:40px; height:40px; border-radius:50%;
+  border:2px solid #cc0000; background:rgba(204,0,0,0.08);
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+  box-shadow:0 0 12px rgba(204,0,0,0.25); flex-shrink:0;
+}
+.prof-trainer { font-size:5px; color:#666; letter-spacing:1px; margin-bottom:4px; }
+.prof-name    { font-size:8px; color:#fff; letter-spacing:2px; }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:10px; }
+.stat-box { background:#0a0a0f; border:1px solid #1e1e30; padding:7px 8px; min-height:24px; }
+.stat-v { font-size:9px; display:block; line-height:1.1; margin-bottom:3px; }
+.stat-v.g { color:#ffd700; text-shadow:0 0 8px rgba(255,215,0,0.7); }
+.stat-v.r { color:#e63946; text-shadow:0 0 8px rgba(230,57,70,0.7); }
+.stat-v.gr{ color:#4ade80; text-shadow:0 0 8px rgba(74,222,128,0.7); }
+.stat-l { font-size:4px; color:#555; letter-spacing:1px; }
+.prog-lbl   { font-size:5px; color:#b0b0c4; letter-spacing:1px; margin-bottom:4px; }
+.prog-track { background:#0d0d18; border:1px solid #1e1e30; height:8px; margin-bottom:12px; position:relative; }
+.prog-fill  { height:100%; background:#cc0000; box-shadow:0 0 6px rgba(204,0,0,0.6); width:3%; }
+.logout     { background:transparent; border:1px solid #250000; color:#3a0000; font-family:'Press Start 2P',monospace; font-size:4px; padding:8px 0; width:100%; text-align:center; cursor:pointer; min-height:24px; }
+
+/* Analytics */
+.combo-row {
+  display:flex; align-items:center; gap:8px;
+  background:#0a0a0f; border:1px solid #1e1e30; padding:8px 9px; margin-bottom:9px;
+}
+.combo-stats { flex:1; }
+.cs-chip { background:#0d0d18; border:1px solid #1a1a2a; padding:5px 6px; margin-bottom:4px; }
+.cs-chip:last-child { margin-bottom:0; }
+.cs-v { font-size:8px; display:block; line-height:1.1; margin-bottom:2px; }
+.cs-v.g { color:#ffd700; text-shadow:0 0 6px rgba(255,215,0,0.7); }
+.cs-v.r { color:#e63946; text-shadow:0 0 6px rgba(230,57,70,0.7); }
+.cs-l { font-size:4px; color:#444; letter-spacing:1px; }
+.mb-row { background:#0a0a0f; border:1px solid #1e1e30; padding:7px 9px; margin-bottom:5px; min-height:24px; }
+.mb-top { display:flex; justify-content:space-between; margin-bottom:4px; }
+.mb-name { font-size:5px; color:#c8c8d8; letter-spacing:1px; }
+.mb-pct  { font-size:5px; color:#e63946; text-shadow:0 0 5px rgba(230,57,70,0.6); }
+.mb-pct.gr { color:#4ade80; text-shadow:0 0 5px rgba(74,222,128,0.6); }
+.mb-track { height:6px; background:#181828; border:1px solid #1e1e30; position:relative; overflow:hidden; margin-bottom:4px; }
+.mb-fill  { height:100%; background:#cc0000; box-shadow:0 0 4px rgba(204,0,0,0.6); }
+.mb-fill.gr { background:#4ade80; box-shadow:0 0 4px rgba(74,222,128,0.6); }
+.mb-fill::after { content:''; position:absolute; inset:0; background-image:repeating-linear-gradient(90deg,transparent 0px,transparent 4px,rgba(0,0,0,0.25) 4px,rgba(0,0,0,0.25) 5px); }
+.mb-streaks { display:flex; gap:10px; }
+.mb-s { font-size:4px; color:#444; letter-spacing:1px; }
+.mb-s span { color:#ffd700; }
+</style>
+</head>
+<body>
+
+<div class="page-title">HABIDEX</div>
+<div class="page-sub">7 pantallas — Pixel Neon · v3</div>
+<div class="page-hig">HIG <span>✓</span> APLICADO</div>
+
+<div class="screens-grid">
+
+  <!-- 01 LOGIN -->
+  <div class="screen-slot">
+    <div class="screen-num">01</div>
+    <div class="screen-title">LOGIN</div>
+    <div class="phone">
+      <div class="bg">
+        <div class="grid-bg"></div><div class="glow glow-r"></div>
+        <!-- HIG: Status bar 59pt -->
+        <div class="statusbar z1">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">▮▮▮ ◀◀</span>
+        </div>
+        <div class="hdr z1"><span class="hdr-logo">★ HABIDEX</span></div>
+        <div class="z1" style="padding:18px 14px 0; flex:1">
+          <div class="login-logo">★ HABIDEX ★</div>
+          <div class="login-sub">HABIT TRAINER</div>
+          <label class="input-lbl">CORREO</label>
+          <input class="input-px" type="text" value="entrenador@mail.com" readonly>
+          <label class="input-lbl">CONTRASEÑA</label>
+          <input class="input-px" type="password" value="••••••••" readonly>
+          <br>
+          <button class="btn-r">► INICIAR SESIÓN</button>
+          <div class="login-div">── ─ ──</div>
+          <div class="login-reg">¿NO TIENES CUENTA?</div>
+          <button class="btn-out">► REGISTRARSE</button>
+        </div>
+        <!-- HIG: Home indicator 34pt -->
+        <div class="homebar"><div class="home-pill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 HÁBITOS -->
+  <div class="screen-slot">
+    <div class="screen-num">02</div>
+    <div class="screen-title">HÁBITOS</div>
+    <div class="phone">
+      <div class="bg">
+        <div class="grid-bg"></div><div class="glow glow-r"></div>
+        <div class="statusbar z1">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">▮▮▮ ◀◀</span>
+        </div>
+        <div class="hdr z1"><span class="hdr-logo">★ HABIDEX</span><span class="hdr-coins">💰 120 PTS</span></div>
+        <div class="z1" style="padding:10px 11px 0; flex:1">
+          <div class="date-row">LUN &nbsp; 21 &nbsp; ABR &nbsp; 2026</div>
+          <div class="streak-box"><span class="s-lbl">🔥 RACHA</span><span class="s-val">3 DÍAS</span></div>
+          <div class="habit done">
+            <div class="h-name"><span>► HACER EJERCICIO</span><span class="chk">✓</span></div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot e"></div><div class="dot e"></div><div class="dot e"></div><div class="dot e"></div></div>
+          </div>
+          <div class="habit">
+            <div class="h-name"><span>► LEER 30 MIN</span></div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot e"></div><div class="dot e"></div><div class="dot e"></div><div class="dot e"></div><div class="dot e"></div></div>
+          </div>
+          <div class="habit">
+            <div class="h-name"><span>► BEBER AGUA</span></div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot e"></div><div class="dot e"></div><div class="dot e"></div></div>
+          </div>
+          <button class="btn-r" style="margin-top:11px">▶ COMPLETAR HOY</button>
+        </div>
+        <div class="tabs"><span class="tab on">⊞<br>HÁBITOS</span><span class="tab">◉<br>POKÉDEX</span><span class="tab">📊<br>STATS</span><span class="tab">♟<br>PERFIL</span></div>
+        <div class="homebar"><div class="home-pill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 COMPLETADO -->
+  <div class="screen-slot">
+    <div class="screen-num">03</div>
+    <div class="screen-title">COMPLETADO</div>
+    <div class="phone">
+      <div class="bg">
+        <div class="grid-bg"></div><div class="glow glow-g"></div>
+        <div class="statusbar z1">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">▮▮▮ ◀◀</span>
+        </div>
+        <div class="hdr z1"><span class="hdr-logo">★ HABIDEX</span><span class="hdr-coins">💰 130 PTS</span></div>
+        <div class="z1" style="padding:20px 14px 0; display:flex; flex-direction:column; align-items:center; flex:1">
+          <div class="big-ring"><span class="big-chk">✓</span></div>
+          <div class="comp-title">¡COMPLETADO!</div>
+          <div class="comp-habit">► LEER 30 MIN</div>
+          <div class="reward-row">
+            <div class="rew-box"><span class="rew-v">+10</span><span class="rew-l">💰 MONEDAS</span></div>
+            <div class="rew-box r-box"><span class="rew-v">🔥 4</span><span class="rew-l">DÍAS RACHA</span></div>
+          </div>
+          <button class="btn-r" style="font-size:5px">► CONTINUAR</button>
+        </div>
+        <div class="homebar"><div class="home-pill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 POKÉDEX -->
+  <div class="screen-slot">
+    <div class="screen-num">04</div>
+    <div class="screen-title">POKÉDEX</div>
+    <div class="phone">
+      <div class="bg">
+        <div class="grid-bg"></div><div class="glow glow-r"></div>
+        <div class="statusbar z1">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">▮▮▮ ◀◀</span>
+        </div>
+        <div class="hdr z1"><span class="hdr-logo">★ POKÉDEX</span><span class="hdr-coins">💰 120 PTS</span></div>
+        <div class="z1" style="padding:9px 10px 0; flex:1">
+          <div class="poke-hrow"><span class="poke-tit">GEN I</span><span class="poke-cnt">✓ 4/151</span></div>
+          <div class="poke-grid">
+            <div class="poke-cell caught"><img class="poke-sprite" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"><div class="poke-num">#001</div><div class="poke-name">BULBASAUR</div></div>
+            <div class="poke-cell caught"><img class="poke-sprite" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png"><div class="poke-num">#002</div><div class="poke-name">IVYSAUR</div></div>
+            <div class="poke-cell caught"><img class="poke-sprite" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png"><div class="poke-num">#003</div><div class="poke-name">VENUSAUR</div></div>
+            <div class="poke-cell caught"><img class="poke-sprite" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"><div class="poke-num">#004</div><div class="poke-name">CHARMANDER</div></div>
+            <div class="poke-cell"><img class="poke-sprite locked" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png"><div class="poke-num">#005</div><div class="poke-name">???</div></div>
+            <div class="poke-cell"><img class="poke-sprite locked" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png"><div class="poke-num">#006</div><div class="poke-name">???</div></div>
+            <div class="poke-cell"><img class="poke-sprite locked" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"><div class="poke-num">#007</div><div class="poke-name">???</div></div>
+            <div class="poke-cell"><img class="poke-sprite locked" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/8.png"><div class="poke-num">#008</div><div class="poke-name">???</div></div>
+            <div class="poke-cell"><img class="poke-sprite locked" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/9.png"><div class="poke-num">#009</div><div class="poke-name">???</div></div>
+          </div>
+        </div>
+        <div class="tabs"><span class="tab">⊞<br>HÁBITOS</span><span class="tab on">◉<br>POKÉDEX</span><span class="tab">📊<br>STATS</span><span class="tab">♟<br>PERFIL</span></div>
+        <div class="homebar"><div class="home-pill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 ATRAPAR -->
+  <div class="screen-slot">
+    <div class="screen-num">05</div>
+    <div class="screen-title">ATRAPAR</div>
+    <div class="phone">
+      <div class="bg">
+        <div class="grid-bg"></div><div class="glow glow-r"></div>
+        <div class="statusbar z1">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">▮▮▮ ◀◀</span>
+        </div>
+        <div class="hdr z1"><span class="hdr-back">◄ VOLVER</span><span class="hdr-coins">💰 120 PTS</span></div>
+        <div class="z1" style="padding:10px 14px 0; display:flex; flex-direction:column; align-items:center; flex:1">
+          <div class="catch-ring"><img class="catch-sprite" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png"></div>
+          <div class="catch-num">#006</div>
+          <div class="catch-name">CHARIZARD</div>
+          <div class="type-row">
+            <span class="badge badge-fire">FUEGO</span>
+            <span class="badge badge-fly">VOLADOR</span>
+          </div>
+          <div class="cost">💰 COSTO: 50 MONEDAS</div>
+          <button class="btn-r" style="font-size:5px; margin-bottom:6px">► ATRAPAR POKÉMON</button>
+          <button class="btn-out" style="font-size:4px">CANCELAR</button>
+        </div>
+        <div class="homebar"><div class="home-pill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 PERFIL -->
+  <div class="screen-slot">
+    <div class="screen-num">06</div>
+    <div class="screen-title">PERFIL</div>
+    <div class="phone">
+      <div class="bg">
+        <div class="grid-bg"></div><div class="glow glow-r"></div>
+        <div class="statusbar z1">
+          <span class="sb-time">9:41</span>
+          <span class="sb-icons">▮▮▮ ◀◀</span>
+        </div>
+        <div class="hdr z1"><span class="hdr-logo">★ HABIDEX</span><span class="hdr-coins">💰 120 PTS</span></div>
+        <div class="z1" style="padding:11px 12px 0; flex:1">
+          <div class="prof-avatar-row">
+            <div class="avatar">🎮</div>
+            <div><div class="prof-trainer">ENTRENADOR</div><div class="prof-name">GERARDO</div></div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-box"><span class="stat-v g">120</span><span class="stat-l">💰 MONEDAS</span></div>
+            <div class="stat-box"><span class="stat-v r">3</span><span class="stat-l">🔥 RACHA</span></div>
+            <div class="stat-box"><span class="stat-v gr">4</span><span class="stat-l">✓ ATRAPADOS</span></div>
+            <div class="stat-box"><span class="stat-v g">14</span><span class="stat-l">⭐ MEJOR</span></div>
+          </div>
+          <div class="prog-lbl">POKÉDEX: 4 / 151</div>
+          <div class="prog-track"><div class="prog-fill"></div></div>
+          <button class="logout">► CERRAR SESIÓN</button>
+        </div>
+        <div class="tabs"><span class="tab">⊞<br>HÁBITOS</span><span class="tab">◉<br>POKÉDEX</span><span class="tab">📊<br>STATS</span><span class="tab on">♟<br>PERFIL</span></div>
+        <div class="homebar"><div class="home-pill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 ANALYTICS -->
+  <div class="screen-slot">
+    <div class="screen-num">07</div>
+    <div class="screen-title">ANALYTICS</div>
+    <div class="phone">
+      <div class="phone-scroll">
+        <div class="bg" style="min-height:459px">
+          <div class="grid-bg"></div><div class="glow glow-r"></div>
+          <div class="statusbar z1">
+            <span class="sb-time">9:41</span>
+            <span class="sb-icons">▮▮▮ ◀◀</span>
+          </div>
+          <div class="hdr z1"><span class="hdr-logo">★ ANALYTICS</span><span class="hdr-range">ÚLT. 30 DÍAS</span></div>
+          <div class="z1" style="padding:10px 11px 0; flex:1">
+
+            <!-- Donut + stats -->
+            <div class="combo-row">
+              <svg width="68" height="68" viewBox="0 0 68 68" style="flex-shrink:0">
+                <circle cx="34" cy="34" r="25" fill="none" stroke="#181828" stroke-width="9"/>
+                <circle cx="34" cy="34" r="25" fill="none" stroke="#4ade80" stroke-width="9"
+                  stroke-dasharray="114.7 157.1" stroke-linecap="square"
+                  transform="rotate(-90 34 34)"
+                  style="filter:drop-shadow(0 0 4px rgba(74,222,128,0.8))"/>
+                <text x="34" y="31" text-anchor="middle" font-family="'Press Start 2P',monospace" font-size="9" fill="#fff">73%</text>
+                <text x="34" y="44" text-anchor="middle" font-family="'Press Start 2P',monospace" font-size="4" fill="#555">30 DÍAS</text>
+              </svg>
+              <div class="combo-stats">
+                <div class="cs-chip"><span class="cs-v g">47</span><span class="cs-l">TOTAL HISTÓRICO</span></div>
+                <div class="cs-chip"><span class="cs-v r">🔥 3</span><span class="cs-l">RACHA ACTUAL</span></div>
+              </div>
+            </div>
+
+            <div class="sec-lbl">▸ POR HÁBITO — 30 DÍAS</div>
+
+            <div class="mb-row">
+              <div class="mb-top"><span class="mb-name">► HACER EJERCICIO</span><span class="mb-pct">80%</span></div>
+              <div class="mb-track"><div class="mb-fill" style="width:80%"></div></div>
+              <div class="mb-streaks"><span class="mb-s">ACTUAL <span>3D</span></span><span class="mb-s">MÁX <span>14D</span></span></div>
+            </div>
+
+            <div class="mb-row">
+              <div class="mb-top"><span class="mb-name">► LEER 30 MIN</span><span class="mb-pct">60%</span></div>
+              <div class="mb-track"><div class="mb-fill" style="width:60%"></div></div>
+              <div class="mb-streaks"><span class="mb-s">ACTUAL <span>2D</span></span><span class="mb-s">MÁX <span>9D</span></span></div>
+            </div>
+
+            <div class="mb-row">
+              <div class="mb-top"><span class="mb-name">► BEBER AGUA</span><span class="mb-pct gr">93%</span></div>
+              <div class="mb-track"><div class="mb-fill gr" style="width:93%"></div></div>
+              <div class="mb-streaks"><span class="mb-s">ACTUAL <span>7D</span></span><span class="mb-s">MÁX <span>21D</span></span></div>
+            </div>
+
+          </div>
+          <div class="tabs"><span class="tab">⊞<br>HÁBITOS</span><span class="tab">◉<br>POKÉDEX</span><span class="tab on">📊<br>STATS</span><span class="tab">♟<br>PERFIL</span></div>
+          <div class="homebar"><div class="home-pill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /screens-grid -->
+</body>
+</html>

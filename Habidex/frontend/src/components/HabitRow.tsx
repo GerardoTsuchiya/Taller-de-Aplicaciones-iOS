@@ -8,20 +8,40 @@ import WeekDots from './WeekDots';
 interface Props {
   habit: HabitWithStreak;
   onPress: () => void;
+  onComplete: () => void;
+  onDelete: () => void;
 }
 
-export default function HabitRow({ habit, onPress }: Props) {
+export default function HabitRow({ habit, onPress, onComplete, onDelete }: Props) {
   const textColor = habit.completedToday ? Colors.green : Colors.textDisabled;
   const textGlow = habit.completedToday ? 'green' : 'none';
 
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.row, habit.completedToday && styles.rowDone]} activeOpacity={0.7}>
+    <View style={[styles.row, habit.completedToday && styles.rowDone]}>
       <View style={styles.top}>
-        <PixelText size={9} color={textColor} glow={textGlow as any}>► {habit.name.toUpperCase()}</PixelText>
-        {habit.completedToday && <PixelText size={11} color={Colors.green} glow="green">✓</PixelText>}
+        <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.titleButton}>
+          <PixelText size={9} color={textColor} glow={textGlow as any}>► {habit.name.toUpperCase()}</PixelText>
+        </TouchableOpacity>
+        <View style={styles.actions}>
+          <TouchableOpacity
+            onPress={onComplete}
+            disabled={habit.completedToday}
+            activeOpacity={0.7}
+            style={[styles.iconButton, habit.completedToday && styles.completeDone]}
+          >
+            <PixelText size={9} color={habit.completedToday ? Colors.green : Colors.redGlow} glow={habit.completedToday ? 'green' : 'red'}>
+              ✓
+            </PixelText>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onDelete} activeOpacity={0.7} style={[styles.iconButton, styles.deleteButton]}>
+            <PixelText size={9} color={Colors.redGlow} glow="red">×</PixelText>
+          </TouchableOpacity>
+        </View>
       </View>
-      <WeekDots streak={habit.streak} done={habit.completedToday} />
-    </TouchableOpacity>
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+        <WeekDots streak={habit.streak} done={habit.completedToday} />
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -37,5 +57,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   rowDone: { borderColor: '#1a3a1a' },
-  top: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
+  top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  titleButton: { flex: 1, minHeight: 24, justifyContent: 'center', paddingRight: 8 },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  iconButton: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#1e1e30',
+    backgroundColor: '#06060d',
+  },
+  completeDone: {
+    borderColor: '#1a3a1a',
+    backgroundColor: 'rgba(74,222,128,0.08)',
+  },
+  deleteButton: {
+    borderColor: '#3a0a0a',
+  },
 });

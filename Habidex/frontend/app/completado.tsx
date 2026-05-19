@@ -7,17 +7,19 @@ import AppHeader from '@/components/AppHeader';
 import PixelText from '@/components/PixelText';
 import PixelButton from '@/components/PixelButton';
 import RewardBox from '@/components/RewardBox';
+import { useCoinsStore } from '@/store/coinsStore';
 
 export default function CompletadoModal() {
   const { habitName, coinsEarned, streak } = useLocalSearchParams<{
     habitName: string; coinsEarned: string; streak: string;
   }>();
   const router = useRouter();
+  const coins = useCoinsStore(state => state.coins);
 
   return (
     <View style={styles.screen}>
       <GridBackground />
-      <AppHeader title="★ HABIDEX" />
+      <AppHeader title="★ HABIDEX" coins={coins} />
       <View style={styles.content}>
         <View style={styles.ring}>
           <PixelText size={32} color={Colors.green} glow="green">✓</PixelText>

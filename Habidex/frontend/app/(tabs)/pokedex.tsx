@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, FlatList, StyleSheet, Alert, Dimensions } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { getAvailable, Pokemon } from '@/api/collection';
 import { getProfile } from '@/api/profile';
+import { isUnauthorizedError } from '@/api/client';
+import { useCoinsStore } from '@/store/coinsStore';
 import { Colors } from '@/constants/theme';
 import GridBackground from '@/components/GridBackground';
 import AppHeader from '@/components/AppHeader';
@@ -16,16 +18,25 @@ const cellWidth = (Dimensions.get('window').width - PADDING * 2 - CELL_GAP * (NU
 
 export default function PokedexScreen() {
   const [pokemon, setPokemon] = useState<Pokemon[]>([]);
-  const [coins, setCoins] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const { coins, setCoins } = useCoinsStore();
   const router = useRouter();
 
-  useEffect(() => {
-    Promise.all([getAvailable(), getProfile()])
-      .then(([pokes, profile]) => { setPokemon(pokes); setCoins(profile.coins); })
-      .catch(e => Alert.alert('Error', e.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const load = useCallback(async () => {
+    try {
+      const [pokes, profile] = await Promise.all([getAvailable(), getProfile()]);
+      setPokemon(pokes);
+      setCoins(profile.coins);
+    } catch (e: any) {
+      if (isUnauthorizedError(e)) return;
+      Alert.alert('Error', e.message);
+    }
+  }, [setCoins]);
+
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   const caught = pokemon.filter(p => p.caught).length;
 
@@ -49,7 +60,7 @@ export default function PokedexScreen() {
           <View style={{ width: cellWidth }}>
             <PokemonCell
               pokemon={item}
-              onPress={() => !item.caught && router.push({ pathname: '/atrapar/[id]', params: { id: item.id } })}
+              onPress={() => !item.caught && router.push({ pathname: '/atrapar/[id]', params: { id: item.id, coins } })}
             />
           </View>
         )}

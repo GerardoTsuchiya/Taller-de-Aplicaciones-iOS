@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { getProfile, Profile } from '@/api/profile';
+import { isUnauthorizedError } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
-import { useRouter } from 'expo-router';
+import { useCoinsStore } from '@/store/coinsStore';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Colors } from '@/constants/theme';
 import GridBackground from '@/components/GridBackground';
 import AppHeader from '@/components/AppHeader';
@@ -13,14 +15,29 @@ import StatBox from '@/components/StatBox';
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const { user, logout } = useAuthStore();
+  const { coins, setCoins } = useCoinsStore();
   const router = useRouter();
 
-  useEffect(() => {
-    getProfile().then(setProfile).catch(e => Alert.alert('Error', e.message));
-  }, []);
+  const load = useCallback(async () => {
+    try {
+      const profileData = await getProfile();
+      setProfile(profileData);
+      setCoins(profileData.coins);
+    } catch (e: any) {
+      if (isUnauthorizedError(e)) return;
+      Alert.alert('Error', e.message);
+    }
+  }, [setCoins]);
+
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   const handleLogout = async () => {
     await logout();
+    setCoins(0);
     router.replace('/(auth)/login');
   };
 
@@ -31,20 +48,20 @@ export default function ProfileScreen() {
   return (
     <View style={styles.screen}>
       <GridBackground />
-      <AppHeader title="★ HABIDEX" coins={profile?.coins} />
+      <AppHeader title="★ HABIDEX" coins={coins} />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.avatarRow}>
           <View style={styles.avatar}><PixelText size={24}>🎮</PixelText></View>
           <View>
             <PixelText size={9} color={Colors.textDisabled}>ENTRENADOR</PixelText>
             <PixelText size={15} color="#ffffff" style={{ marginTop: 4 }}>
-              {user?.username?.split('@')[0].toUpperCase() ?? '---'}
+              {(profile?.username ?? user?.username ?? '---').toUpperCase()}
             </PixelText>
           </View>
         </View>
 
         <View style={styles.statsRow}>
-          <StatBox value={profile?.coins ?? 0} label="💰 MONEDAS" glowColor="gold" />
+          <StatBox value={coins} label="💰 MONEDAS" glowColor="gold" />
           <View style={{ width: 6 }} />
           <StatBox value={profile?.habits_count ?? 0} label="📋 HÁBITOS" glowColor="red" />
         </View>

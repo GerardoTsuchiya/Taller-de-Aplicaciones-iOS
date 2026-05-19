@@ -3,9 +3,9 @@ import { apiFetch } from './client';
 export interface Habit {
   id: string;
   name: string;
-  description?: string;
+  description?: string | null;
   reminder_enabled: boolean;
-  reminder_time?: string;
+  reminder_time?: string | null;
 }
 
 export interface HabitWithStreak extends Habit {
@@ -38,7 +38,7 @@ export const getHabitsWithStreak = async (): Promise<HabitWithStreak[]> => {
   );
 };
 
-export const createHabit = (body: { name: string; description?: string; reminder_enabled: boolean; reminder_time?: string }): Promise<Habit> =>
+export const createHabit = (body: { name: string; description?: string | null; reminder_enabled: boolean; reminder_time?: string | null }): Promise<Habit> =>
   apiFetch('/habits', { method: 'POST', body: JSON.stringify(body) });
 
 export const updateHabit = (id: string, body: Partial<Habit>): Promise<Habit> =>

@@ -13,14 +13,20 @@
       "resizeMode": "contain",
       "backgroundColor": "#08080f"
     },
-    "web": { "bundler": "metro" },
+    "web": {
+      "bundler": "metro"
+    },
     "plugins": [
       "expo-router",
       "expo-font",
       [
         "expo-notifications",
-        { "icon": "./assets/icon.png", "color": "#cc0000" }
-      ]
+        {
+          "icon": "./assets/icon.png",
+          "color": "#cc0000"
+        }
+      ],
+      "expo-secure-store"
     ],
     "android": {
       "adaptiveIcon": {
@@ -28,6 +34,8 @@
         "backgroundColor": "#08080f"
       }
     },
-    "ios": { "supportsTablet": false }
+    "ios": {
+      "supportsTablet": false
+    }
   }
 }

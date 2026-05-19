@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habidex — HIG Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #06060d;
+  min-height: 100vh;
+  padding: 40px 32px 80px;
+  font-family: 'Rajdhani', sans-serif;
+  color: #c8c8d8;
+}
+
+h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px; color: #fff; letter-spacing: 4px;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(230,57,70,0.6);
+  margin-bottom: 6px;
+}
+.sub {
+  text-align: center; font-size: 13px; color: #444;
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 48px;
+}
+
+/* ── Layout ── */
+.two-col {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+}
+
+/* ── Rule cards ── */
+.rules {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 360px;
+  flex: 1;
+}
+
+.rule-card {
+  background: #0d0d1a;
+  border: 1px solid #1e1e30;
+  border-left: 3px solid #cc0000;
+  padding: 14px 16px;
+}
+.rule-card.ok    { border-left-color: #4ade80; }
+.rule-card.warn  { border-left-color: #ffd700; }
+.rule-card.fix   { border-left-color: #e63946; }
+
+.rule-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px; letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.rule-card.ok   .rule-title { color: #4ade80; text-shadow: 0 0 6px rgba(74,222,128,0.5); }
+.rule-card.warn .rule-title { color: #ffd700; text-shadow: 0 0 6px rgba(255,215,0,0.5); }
+.rule-card.fix  .rule-title { color: #e63946; text-shadow: 0 0 6px rgba(230,57,70,0.5); }
+
+.rule-body { font-size: 14px; line-height: 1.6; color: #9090a8; }
+.rule-body strong { color: #c8c8d8; }
+.rule-body code {
+  font-family: monospace; font-size: 12px;
+  background: #161628; padding: 1px 5px;
+  border: 1px solid #2a2a3e;
+}
+
+/* ── Phone annotated ── */
+.phone-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.phone-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px; color: #666; letter-spacing: 2px;
+}
+
+.phone-annotated {
+  position: relative;
+  width: 212px;
+}
+
+.phone {
+  width: 212px; height: 422px;
+  border-radius: 36px; overflow: hidden;
+  border: 3px solid #1a1a2e;
+  box-shadow: 0 0 0 1px rgba(230,57,70,0.12), 0 20px 60px rgba(0,0,0,0.8);
+  position: relative;
+  background: #08080f;
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* Safe area zones */
+.zone {
+  position: absolute;
+  left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  z-index: 20;
+}
+.zone-status {
+  top: 0; height: 32px; /* ~59pt * (212/390) ≈ 32px */
+  background: rgba(255,215,0,0.12);
+  border-bottom: 1px dashed rgba(255,215,0,0.5);
+  color: #ffd700;
+}
+.zone-home {
+  bottom: 0; height: 19px; /* ~34pt * (212/390) ≈ 18px */
+  background: rgba(255,215,0,0.1);
+  border-top: 1px dashed rgba(255,215,0,0.5);
+  color: #ffd700;
+}
+.zone-tab {
+  bottom: 19px; height: 27px; /* ~49pt * (212/390) ≈ 27px */
+  background: rgba(230,57,70,0.08);
+  border-top: 1px dashed rgba(230,57,70,0.5);
+  color: #e63946;
+}
+.zone-content {
+  top: 32px;
+  height: calc(422px - 32px - 27px - 19px);
+  background: rgba(74,222,128,0.04);
+  color: #4ade80;
+  border: none;
+  font-size: 10px;
+}
+.zone-header {
+  top: 32px; height: 24px; /* ~44pt header */
+  background: rgba(230,57,70,0.1);
+  border-bottom: 1px dashed rgba(230,57,70,0.4);
+  color: #e63946;
+  z-index: 21;
+}
+
+/* Measurement arrows */
+.arrow-right {
+  position: absolute;
+  right: -88px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.arrow-right::before {
+  content: '←';
+  font-size: 14px;
+}
+.arr-yellow { color: #ffd700; }
+.arr-red    { color: #e63946; }
+.arr-green  { color: #4ade80; }
+
+/* Content inside phone */
+.phone-inner {
+  position: absolute;
+  inset: 0;
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* Grid background */
+.grid-bg {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),
+                    linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);
+  background-size: 18px 18px;
+  pointer-events: none; z-index: 0;
+}
+
+/* Simulated header */
+.sim-hdr {
+  position: absolute;
+  top: 32px;
+  left: 0; right: 0;
+  height: 24px;
+  background: #110000;
+  border-bottom: 2px solid #cc0000;
+  display: flex;
+  align-items: center;
+  padding: 0 13px;
+  justify-content: space-between;
+  z-index: 5;
+}
+.sim-hdr-logo { font-size: 5px; color: #fff; letter-spacing: 2px; text-shadow: 0 0 8px rgba(230,57,70,0.8); }
+.sim-hdr-coins { font-size: 5px; color: #ffd700; }
+
+/* Simulated content */
+.sim-content {
+  position: absolute;
+  top: 56px;
+  left: 0; right: 0;
+  bottom: 46px;
+  padding: 8px;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.sim-habit {
+  background: #0a0a0f;
+  border: 1px solid #1e1e30;
+  padding: 7px 9px;
+  margin-bottom: 5px;
+  height: 24px; /* ~44pt = 24px touch target */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sim-habit-text { font-size: 4px; color: #666; letter-spacing: 1px; }
+
+.sim-btn {
+  background: #cc0000;
+  height: 24px; /* 44pt minimum */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  box-shadow: 0 0 10px rgba(204,0,0,0.3);
+  font-size: 4px;
+  color: #fff;
+  letter-spacing: 2px;
+}
+
+/* Simulated tabs */
+.sim-tabs {
+  position: absolute;
+  bottom: 19px;
+  left: 0; right: 0;
+  height: 27px;
+  background: #080810;
+  border-top: 2px solid #1a1a2a;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 5;
+}
+.sim-tab { font-size: 4px; color: #b0b0c4; letter-spacing: 1px; }
+.sim-tab.on { color: #e63946; text-shadow: 0 0 6px rgba(230,57,70,0.7); }
+
+/* Simulated status bar */
+.sim-status {
+  position: absolute;
+  top: 0;
+  left: 0; right: 0;
+  height: 32px;
+  background: #08080f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 5;
+}
+.sim-time { font-size: 5px; color: #c8c8d8; }
+.sim-icons { font-size: 5px; color: #c8c8d8; letter-spacing: 3px; }
+
+/* Simulated home indicator */
+.sim-home {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 19px;
+  background: #08080f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+.sim-home-pill {
+  width: 60px; height: 4px;
+  background: #c8c8d8;
+  border-radius: 2px;
+  opacity: 0.4;
+}
+
+/* Touch target indicator */
+.touch-indicator {
+  position: absolute;
+  right: 4px;
+  border: 1px dashed rgba(74,222,128,0.5);
+  pointer-events: none;
+  z-index: 15;
+}
+.touch-label {
+  position: absolute;
+  right: 4px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 9px;
+  color: rgba(74,222,128,0.7);
+  white-space: nowrap;
+}
+
+/* ── Summary table ── */
+.summary {
+  max-width: 700px;
+  margin: 0 auto 48px;
+}
+.summary h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px; color: #c8c8d8; letter-spacing: 3px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.summary-table th {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px; color: #666; letter-spacing: 2px;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #1a1a2a;
+}
+.summary-table td {
+  font-size: 13px; color: #9090a8;
+  padding: 10px 12px;
+  border-bottom: 1px solid #111120;
+  line-height: 1.5;
+}
+.summary-table td:first-child { color: #c8c8d8; font-weight: 600; }
+.badge {
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 5px;
+  padding: 3px 7px;
+  letter-spacing: 1px;
+  margin-right: 4px;
+}
+.badge-ok   { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+.badge-fix  { background: rgba(230,57,70,0.15);  color: #e63946; border: 1px solid rgba(230,57,70,0.3); }
+.badge-warn { background: rgba(255,215,0,0.15);  color: #ffd700; border: 1px solid rgba(255,215,0,0.3); }
+
+.delta {
+  font-family: monospace;
+  font-size: 11px;
+  background: #0d0d1a;
+  padding: 2px 6px;
+  border: 1px solid #1e1e30;
+  color: #4ade80;
+}
+
+/* ── Question at bottom ── */
+.question {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #0d0d1a;
+  border: 1px solid #cc0000;
+  box-shadow: 0 0 20px rgba(204,0,0,0.1);
+  padding: 24px 28px;
+  text-align: center;
+}
+.question h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px; color: #e63946; letter-spacing: 2px;
+  margin-bottom: 14px;
+  text-shadow: 0 0 8px rgba(230,57,70,0.5);
+}
+.question p { font-size: 14px; color: #9090a8; line-height: 1.7; }
+.question strong { color: #c8c8d8; }
+</style>
+</head>
+<body>
+
+<h1>HIG ADJUSTMENTS</h1>
+<p class="sub">Habidex · iOS Human Interface Guidelines</p>
+
+<div class="two-col">
+
+  <!-- Annotated phone -->
+  <div class="phone-wrap">
+    <div class="phone-label">DISEÑO AJUSTADO</div>
+    <div class="phone-annotated">
+      <div class="phone">
+        <div class="grid-bg"></div>
+        <!-- Zones (visual overlays) -->
+        <div class="zone zone-status">9:41 AM</div>
+        <div class="zone zone-content"></div>
+        <div class="zone zone-header"></div>
+        <div class="zone zone-tab"></div>
+        <div class="zone zone-home"></div>
+
+        <!-- Real content layers -->
+        <div class="sim-status">
+          <span class="sim-time">9:41</span>
+          <span class="sim-icons">▶ ▶▶ ▮▮▮</span>
+        </div>
+
+        <div class="sim-hdr">
+          <span class="sim-hdr-logo">HABIDEX</span>
+          <span class="sim-hdr-coins">⬡ 150</span>
+        </div>
+
+        <div class="sim-content">
+          <div class="sim-habit"><span class="sim-habit-text">EJERCICIO</span><span style="font-size:5px;color:#4ade80">✓</span></div>
+          <div class="sim-habit"><span class="sim-habit-text">LEER</span><span style="font-size:5px;color:#666">○</span></div>
+          <div class="sim-habit"><span class="sim-habit-text">MEDITAR</span><span style="font-size:5px;color:#666">○</span></div>
+          <div class="sim-btn">COMPLETAR HÁBITO</div>
+        </div>
+
+        <div class="sim-tabs">
+          <span class="sim-tab on">⊞</span>
+          <span class="sim-tab">◉</span>
+          <span class="sim-tab">📊</span>
+          <span class="sim-tab">♟</span>
+        </div>
+
+        <div class="sim-home"><div class="sim-home-pill"></div></div>
+      </div>
+
+      <!-- Measurement callouts (positioned relative to phone-annotated) -->
+      <!-- Status bar arrow -->
+      <div style="position:absolute;top:16px;right:-96px;display:flex;align-items:center;gap:6px;font-family:Rajdhani,sans-serif;font-size:12px;font-weight:700;color:#ffd700;white-space:nowrap;">
+        <span>←</span> Status bar 59pt
+      </div>
+      <!-- Header arrow -->
+      <div style="position:absolute;top:43px;right:-88px;display:flex;align-items:center;gap:6px;font-family:Rajdhani,sans-serif;font-size:12px;font-weight:700;color:#e63946;white-space:nowrap;">
+        <span>←</span> Nav bar 44pt
+      </div>
+      <!-- Tab bar arrow -->
+      <div style="position:absolute;bottom:19px;right:-84px;display:flex;align-items:center;gap:6px;font-family:Rajdhani,sans-serif;font-size:12px;font-weight:700;color:#e63946;white-space:nowrap;">
+        <span>←</span> Tab bar 49pt
+      </div>
+      <!-- Home indicator arrow -->
+      <div style="position:absolute;bottom:4px;right:-100px;display:flex;align-items:center;gap:6px;font-family:Rajdhani,sans-serif;font-size:12px;font-weight:700;color:#ffd700;white-space:nowrap;">
+        <span>←</span> Home indicator 34pt
+      </div>
+      <!-- Touch target arrow for habit row -->
+      <div style="position:absolute;top:100px;left:-110px;display:flex;align-items:center;gap:6px;font-family:Rajdhani,sans-serif;font-size:12px;font-weight:700;color:#4ade80;white-space:nowrap;">
+        Touch target 44pt <span>→</span>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;justify-content:center;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#ffd700;font-family:Rajdhani,sans-serif;">
+        <div style="width:12px;height:12px;background:rgba(255,215,0,0.2);border:1px solid #ffd700;"></div>
+        Safe areas
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#e63946;font-family:Rajdhani,sans-serif;">
+        <div style="width:12px;height:12px;background:rgba(230,57,70,0.15);border:1px solid #e63946;"></div>
+        Chrome (header/tabs)
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#4ade80;font-family:Rajdhani,sans-serif;">
+        <div style="width:12px;height:12px;background:rgba(74,222,128,0.1);border:1px solid #4ade80;"></div>
+        Área de contenido
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules panel -->
+  <div class="rules">
+
+    <div class="rule-card fix">
+      <div class="rule-title">AGREGAR STATUS BAR</div>
+      <div class="rule-body">
+        Los mockups actuales no muestran la barra de estado del sistema.<br><br>
+        <strong>HIG:</strong> reservar <strong>59pt</strong> en la parte superior (dispositivos Face ID / Dynamic Island).<br><br>
+        Mostrar hora y íconos del sistema en <code>#08080f</code> con texto <code>#c8c8d8</code>. La estética Pixel Neon se mantiene intacta.
+      </div>
+    </div>
+
+    <div class="rule-card fix">
+      <div class="rule-title">AGREGAR HOME INDICATOR</div>
+      <div class="rule-body">
+        En dispositivos sin botón Home (iPhone X en adelante, que es la mayoría hoy), hay una zona inferior reservada.<br><br>
+        <strong>HIG:</strong> <strong>34pt</strong> debajo del tab bar, solo para el "pill" blanco del sistema.<br><br>
+        El contenido y los tabs <strong>no deben entrar</strong> en esta zona.
+      </div>
+    </div>
+
+    <div class="rule-card warn">
+      <div class="rule-title">TAB BAR — MÍNIMO 49pt</div>
+      <div class="rule-body">
+        El tab bar actual tiene <code>padding: 7px 0 9px</code> en el mockup a escala 212px.<br><br>
+        <strong>HIG:</strong> altura mínima de <strong>49pt</strong> (≈27px en el mockup).<br><br>
+        La altura actual es borderline. Con el home indicator agregado, el tab necesita al menos <code>padding: 8px 0 8px</code> para verse correcto.
+      </div>
+    </div>
+
+    <div class="rule-card warn">
+      <div class="rule-title">TOUCH TARGETS — 44×44pt</div>
+      <div class="rule-body">
+        Los elementos tapeables deben tener al menos <strong>44×44pt</strong> de área interactiva.<br><br>
+        <strong>Afecta:</strong> filas de hábitos, ítems de Pokédex, botones de acción.<br><br>
+        Los botones <code>btn-r</code> y <code>btn-out</code> ya tienen <code>width:100%</code>, solo necesitan <code>min-height: 44pt</code>. Las filas de lista deben ser ≥44pt de alto.
+      </div>
+    </div>
+
+    <div class="rule-card ok">
+      <div class="rule-title">MÁRGENES — BIEN</div>
+      <div class="rule-body">
+        Contenido con <code>padding: 9–13px</code> en el mockup escala = ~17–24pt en dispositivo real.<br><br>
+        <strong>HIG</strong> recomienda <strong>16pt</strong> de margen lateral. Los mockups actuales ya lo cumplen.
+      </div>
+    </div>
+
+    <div class="rule-card ok">
+      <div class="rule-title">TIPOGRAFÍA — EXCEPCIÓN</div>
+      <div class="rule-body">
+        HIG pide Dynamic Type, pero <strong>Press Start 2P es parte del diseño intencional</strong> del juego.<br><br>
+        Excepción válida para apps de juego/gamificación. Solo asegurarse de que el texto sea legible en tamaños pequeños (no menos de 9pt en dispositivo real).
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Summary table -->
+<div class="summary">
+  <h2>RESUMEN DE CAMBIOS</h2>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>Elemento</th>
+        <th>Actual (mockup)</th>
+        <th>HIG target</th>
+        <th>Cambio necesario</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Status bar</td>
+        <td>No existe</td>
+        <td>59pt (Face ID)</td>
+        <td>Agregar zona reservada con hora + íconos</td>
+        <td><span class="badge badge-fix">AGREGAR</span></td>
+      </tr>
+      <tr>
+        <td>Home indicator</td>
+        <td>No existe</td>
+        <td>34pt</td>
+        <td>Zona debajo del tab bar con pill blanco</td>
+        <td><span class="badge badge-fix">AGREGAR</span></td>
+      </tr>
+      <tr>
+        <td>Tab bar height</td>
+        <td>~26px (≈48pt real)</td>
+        <td>49pt mínimo</td>
+        <td>Ajuste mínimo de padding</td>
+        <td><span class="badge badge-warn">AJUSTAR</span></td>
+      </tr>
+      <tr>
+        <td>Touch targets</td>
+        <td>Filas ~22px (≈40pt)</td>
+        <td>44pt mínimo</td>
+        <td>Aumentar altura de filas de hábitos y Pokédex</td>
+        <td><span class="badge badge-warn">AJUSTAR</span></td>
+      </tr>
+      <tr>
+        <td>Márgenes laterales</td>
+        <td>9–13px (≈17–24pt)</td>
+        <td>16pt</td>
+        <td>Sin cambios necesarios</td>
+        <td><span class="badge badge-ok">OK</span></td>
+      </tr>
+      <tr>
+        <td>Tipografía</td>
+        <td>Press Start 2P (fija)</td>
+        <td>Dynamic Type</td>
+        <td>Excepción válida (app de juego)</td>
+        <td><span class="badge badge-ok">EXCEPCIÓN</span></td>
+      </tr>
+      <tr>
+        <td>Color / contraste</td>
+        <td>Blanco sobre oscuro</td>
+        <td>4.5:1 mínimo</td>
+        <td>Texto principal ya cumple; texto secundario (#666) es borderline — revisar</td>
+        <td><span class="badge badge-warn">REVISAR</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Decision question -->
+<div class="question">
+  <h3>¿QUÉ HACER?</h3>
+  <p>
+    Los 2 cambios críticos son <strong>agregar la status bar y el home indicator</strong> — sin ellos los mockups no representan fielmente cómo se ve una app en un iPhone moderno.<br><br>
+    Los ajustes de touch targets y tab bar son menores y se pueden incorporar también.<br><br>
+    ¿Actualizo el diseño completo (<code>all-screens-v2</code>) con estos ajustes y aprobamos la versión final?
+  </p>
+</div>
+
+</body>
+</html>

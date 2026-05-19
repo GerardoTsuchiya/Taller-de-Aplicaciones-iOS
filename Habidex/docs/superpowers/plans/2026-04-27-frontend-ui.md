@@ -6,7 +6,7 @@
 
 **Architecture:** Expo Router con file-based routing — carpeta `(auth)/` para login/registro y `(tabs)/` para las 4 tabs principales. Los modales Completado y Atrapar son rutas raíz presentadas como modal. Un archivo `src/constants/theme.ts` centraliza todos los tokens de diseño. Los componentes visuales son wrappers delgados sobre primitivos de React Native.
 
-**Tech Stack:** Expo SDK 51 · React Native · TypeScript · Expo Router · Zustand · expo-secure-store · expo-font · @expo-google-fonts/press-start-2p · react-native-svg · expo-notifications
+**Tech Stack:** Expo SDK 54 · React Native 0.76 (New Architecture) · TypeScript · Expo Router v4 · Zustand · expo-secure-store · expo-font · @expo-google-fonts/press-start-2p · react-native-svg · expo-notifications
 
 **Diseño de referencia:** `Habidex/.superpowers/brainstorm/310-1777341571/content/all-screens-v3.html`
 **Spec:** `docs/superpowers/specs/2026-04-21-mockups-design.md`
@@ -78,7 +78,7 @@ frontend/
 
 Desde la carpeta `Habidex/`:
 ```bash
-npx create-expo-app frontend --template blank-typescript
+npx create-expo-app@latest frontend --template blank-typescript
 cd frontend
 ```
 
@@ -101,6 +101,7 @@ Abrir `frontend/app.json` y reemplazar el contenido:
     "slug": "habidex",
     "version": "1.0.0",
     "scheme": "habidex",
+    "newArchEnabled": true,
     "web": { "bundler": "metro" },
     "plugins": [
       "expo-router",

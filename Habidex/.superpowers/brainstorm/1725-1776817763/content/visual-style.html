@@ -1,0 +1,99 @@
+<h2>¿Qué estilo visual le va mejor a Habidex?</h2>
+<p class="subtitle">Selecciona el enfoque que más te convenza — luego generamos los mockups completos con ese estilo</p>
+
+<div class="cards">
+
+  <!-- OPCIÓN A: Retro Pixel -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a0a; padding:16px; font-family:monospace;">
+      <!-- Mini mockup retro -->
+      <div style="border:2px solid #e63946; border-radius:4px; padding:10px; color:#e63946; font-size:11px; letter-spacing:1px;">
+        <div style="text-align:center; font-weight:bold; font-size:13px; margin-bottom:8px; color:#fff; text-shadow:0 0 8px #e63946;">
+          ★ HABIDEX ★
+        </div>
+        <div style="background:#1a1a1a; border:1px solid #333; border-radius:2px; padding:6px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#aaa;">► Hacer ejercicio</span>
+          <span style="color:#ffd700; font-size:10px;">▣ ▣ ▣ ▢ ▢ ▢ ▢</span>
+        </div>
+        <div style="background:#1a1a1a; border:1px solid #333; border-radius:2px; padding:6px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#aaa;">► Leer 30 min</span>
+          <span style="color:#ffd700; font-size:10px;">▣ ▣ ▢ ▢ ▢ ▢ ▢</span>
+        </div>
+        <div style="margin-top:8px; display:flex; justify-content:space-between; font-size:10px;">
+          <span style="color:#ffd700;">💰 120 coins</span>
+          <span style="color:#4ade80;">✦ Racha: 3 días</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Retro Pixel</h3>
+      <p>Fondo negro, tipografía monoespaciada, acentos en rojo Pokémon y dorado. Muy gamificado, estilo Game Boy/RPG clásico. Oscuro por defecto.</p>
+    </div>
+  </div>
+
+  <!-- OPCIÓN B: Modern Clean -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f9fa; padding:16px; font-family:system-ui, sans-serif;">
+      <div style="border-radius:16px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.10);">
+        <div style="background:#ee1515; padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#fff; font-weight:700; font-size:14px;">Habidex</span>
+          <span style="background:rgba(255,255,255,0.2); color:#fff; border-radius:20px; padding:3px 10px; font-size:11px;">💰 120</span>
+        </div>
+        <div style="background:#fff; padding:10px;">
+          <div style="background:#f0f4ff; border-radius:10px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+            <span style="color:#222; font-weight:500;">Hacer ejercicio</span>
+            <span style="background:#22c55e; color:#fff; border-radius:20px; padding:2px 8px;">✓</span>
+          </div>
+          <div style="background:#f0f4ff; border-radius:10px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+            <span style="color:#222; font-weight:500;">Leer 30 min</span>
+            <span style="background:#e5e7eb; color:#999; border-radius:20px; padding:2px 8px;">○</span>
+          </div>
+          <div style="text-align:center; margin-top:8px;">
+            <span style="background:#ee1515; color:#fff; border-radius:20px; padding:4px 14px; font-size:10px; font-weight:600;">🎯 Racha: 3 días</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Modern Clean</h3>
+      <p>Colores oficiales de Pokémon (rojo #EE1515), tarjetas redondeadas, tipografía del sistema. Profesional y familiar para usuarios de apps iOS modernas.</p>
+    </div>
+  </div>
+
+  <!-- OPCIÓN C: Bold Pokémon GO -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); padding:16px; font-family:system-ui,sans-serif;">
+      <div style="border-radius:16px; overflow:hidden;">
+        <div style="background:linear-gradient(90deg,#ee1515,#c0392b); padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="color:#fff; font-weight:800; font-size:14px; letter-spacing:1px;">HABIDEX</div>
+            <div style="color:rgba(255,255,255,0.7); font-size:9px;">Pokémon Habit Tracker</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="color:#ffd700; font-weight:700; font-size:13px;">💰 120</div>
+            <div style="color:rgba(255,255,255,0.6); font-size:9px;">monedas</div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); backdrop-filter:blur(10px); padding:10px; border:1px solid rgba(255,255,255,0.1);">
+          <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+            <span style="color:#fff; font-weight:500;">Hacer ejercicio</span>
+            <div style="width:20px; height:20px; border-radius:50%; background:linear-gradient(135deg,#4ade80,#22c55e); display:flex; align-items:center; justify-content:center; font-size:10px;">✓</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+            <span style="color:#fff; font-weight:500;">Leer 30 min</span>
+            <div style="width:20px; height:20px; border-radius:50%; border:2px solid rgba(255,255,255,0.3);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Pokémon GO Bold</h3>
+      <p>Fondo azul marino oscuro, gradientes dramáticos, rojo intenso. Glassmorphism sutil. Oscuro vibrante — muy reconocible para fans de Pokémon.</p>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:16px; text-align:center; font-size:13px; color:#888;">
+  ℹ️ Los mockups finales incluirán versión clara y oscura del estilo elegido.
+</p>
