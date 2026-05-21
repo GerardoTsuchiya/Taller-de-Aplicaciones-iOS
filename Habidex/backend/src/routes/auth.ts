@@ -134,6 +134,8 @@ authRouter.post('/register', async (req: Request, res: Response) => {
             username: normalizedUsername,
         },
         session: sessionData.session,
+        //se agrego el mensaje de alerta
+        message: 'Cuenta creada correctamente.',
     });
 });
 

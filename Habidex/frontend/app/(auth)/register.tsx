@@ -32,27 +32,38 @@ export default function RegisterScreen() {
         body: JSON.stringify({ username, email, password }),
       });
 
+      //Se agrego (de aquí hasta antes de return) lo del mensaje de alerta de cuenta creada sin iniciar sesión
+      const successMessage = message ?? 'La cuenta fue creada correctamente.';
+
       if (!session?.access_token) {
-        Alert.alert(
-          'Cuenta creada',
-          message ?? 'Inicia sesión para continuar.'
-        );
-        router.replace('/(auth)/login');
+        await login(session.access_token, {
+          id: authUser.id,
+          email: authUser.email,
+          username: authUser.username,
+        });
+
+        Alert.alert('Registro exitoso', successMessage, [
+          {
+            text: 'Ir a hábitos',
+            onPress: () => router.replace('/(tabs)'),
+          },
+        ]);
         return;
       }
 
-      await login(session.access_token, {
-        id: authUser.id,
-        email: authUser.email,
-        username: authUser.username,
-      });
-      router.replace('/(tabs)');
+      Alert.alert('Registro exitoso', successMessage, [
+        {
+          text: 'Ir a login',
+          onPress: () => router.replace('/(auth)/login'),
+        },
+      ]);
     } catch (e: any) {
       Alert.alert('Error', e.message);
     } finally {
       setLoading(false);
     }
   };
+  //
 
   return (
     <View style={styles.screen}>

@@ -49,3 +49,7 @@ export const deleteHabit = (id: string): Promise<void> =>
 
 export const completeHabit = (id: string): Promise<CompletionResult> =>
   apiFetch(`/habits/${id}/complete`, { method: 'POST' });
+
+//se agrego esto para usarlo para el calendario
+export const getHabitCompletions = (id: string): Promise<{ completions: string[]; current_streak: number; max_streak: number }> =>
+  apiFetch(`/habits/${id}/completions`);
