@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Fonts } from '@/constants/theme';
 import PixelText from '@/components/PixelText';
@@ -9,10 +10,8 @@ const tabLabel = (label: string, focused: boolean) => (
   </PixelText>
 );
 
-const tabIcon = (icon: string, focused: boolean) => (
-  <PixelText size={8} color={focused ? Colors.redGlow : Colors.textSecondary} glow={focused ? 'red' : 'none'}>
-    {icon}
-  </PixelText>
+const tabIcon = (name: keyof typeof Ionicons.glyphMap, color: string) => (
+  <Ionicons name={name} size={18} color={color} />
 );
 
 export default function TabsLayout() {
@@ -46,28 +45,28 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ focused }) => tabIcon('▾', focused),
+          tabBarIcon: ({ color }) => tabIcon('checkmark-circle-outline', color),
           tabBarLabel: ({ focused }) => tabLabel('HÁBITOS', focused),
         }}
       />
       <Tabs.Screen
         name="pokedex"
         options={{
-          tabBarIcon: ({ focused }) => tabIcon('●', focused),
+          tabBarIcon: ({ color }) => tabIcon('library-outline', color),
           tabBarLabel: ({ focused }) => tabLabel('POKÉDEX', focused),
         }}
       />
       <Tabs.Screen
         name="stats"
         options={{
-          tabBarIcon: ({ focused }) => tabIcon('▲', focused),
+          tabBarIcon: ({ color }) => tabIcon('stats-chart-outline', color),
           tabBarLabel: ({ focused }) => tabLabel('STATS', focused),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ focused }) => tabIcon('◆', focused),
+          tabBarIcon: ({ color }) => tabIcon('person-circle-outline', color),
           tabBarLabel: ({ focused }) => tabLabel('PERFIL', focused),
         }}
       />
