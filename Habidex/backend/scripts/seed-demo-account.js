@@ -21,6 +21,11 @@ async function main() {
 
     let userId;
 
+    const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers();
+    if (usersError) throw usersError;
+
+    const emailUser = usersData.users.find((user) => user.email === DEMO_EMAIL) ?? null;
+
     const { data: existingProfile, error: profileLookupError } = await supabase
         .from('profiles')
         .select('id')
@@ -29,30 +34,39 @@ async function main() {
 
     if (profileLookupError) throw profileLookupError;
 
-    if (existingProfile) {
+    if (emailUser) {
+        userId = emailUser.id;
+        console.log('Cuenta demo encontrada por correo:', userId);
+
+        const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
+            email: DEMO_EMAIL,
+            password: DEMO_PASSWORD,
+            email_confirm: true,
+        });
+
+        if (updateError) throw updateError;
+    } else if (existingProfile) {
         userId = existingProfile.id;
         console.log('Cuenta demo encontrada por usuario:', userId);
+
+        const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
+            email: DEMO_EMAIL,
+            password: DEMO_PASSWORD,
+            email_confirm: true,
+        });
+
+        if (updateError) throw updateError;
     } else {
-        const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers();
-        if (usersError) throw usersError;
+        const { data, error } = await supabase.auth.admin.createUser({
+            email: DEMO_EMAIL,
+            password: DEMO_PASSWORD,
+            email_confirm: true,
+        });
 
-        const existingUser = usersData.users.find((user) => user.email === DEMO_EMAIL);
+        if (error) throw error;
 
-        if (existingUser) {
-            userId = existingUser.id;
-            console.log('Cuenta demo encontrada por correo:', userId);
-        } else {
-            const { data, error } = await supabase.auth.admin.createUser({
-                email: DEMO_EMAIL,
-                password: DEMO_PASSWORD,
-                email_confirm: true,
-            });
-
-            if (error) throw error;
-
-            userId = data.user.id;
-            console.log('Usuario creado:', userId);
-        }
+        userId = data.user.id;
+        console.log('Usuario creado:', userId);
     }
 
     await supabase.from('profiles').upsert({
@@ -68,11 +82,11 @@ async function main() {
     const habitsToInsert = [
         {
             user_id: userId,
-            name: 'Estudiar Swift',
+            name: 'Estudiar React Native',
             description: 'Practicar desarrollo iOS para la universidad',
             reminder_time: '08:00',
             reminder_enabled: true,
-            created_at: daysAgo(90),
+            created_at: daysAgo(30),
         },
         {
             user_id: userId,
@@ -80,7 +94,7 @@ async function main() {
             description: 'Repasar temas de clase',
             reminder_time: '19:30',
             reminder_enabled: true,
-            created_at: daysAgo(86),
+            created_at: daysAgo(29),
         },
         {
             user_id: userId,
@@ -88,7 +102,7 @@ async function main() {
             description: 'Rutina ligera después de clases',
             reminder_time: '07:00',
             reminder_enabled: false,
-            created_at: daysAgo(80),
+            created_at: daysAgo(28),
         },
         {
             user_id: userId,
@@ -96,7 +110,31 @@ async function main() {
             description: 'Mantener un horario saludable',
             reminder_time: '22:30',
             reminder_enabled: true,
-            created_at: daysAgo(75),
+            created_at: daysAgo(27),
+        },
+        {
+            user_id: userId,
+            name: 'Tomar agua',
+            description: 'Mantener hidratación durante el día',
+            reminder_time: '11:00',
+            reminder_enabled: false,
+            created_at: daysAgo(26),
+        },
+        {
+            user_id: userId,
+            name: 'Ordenar tareas',
+            description: 'Preparar la agenda antes de dormir',
+            reminder_time: '21:00',
+            reminder_enabled: true,
+            created_at: daysAgo(25),
+        },
+        {
+            user_id: userId,
+            name: 'Leer 15 min',
+            description: 'Mantener constancia diaria con lectura breve',
+            reminder_time: '18:15',
+            reminder_enabled: false,
+            created_at: daysAgo(24),
         },
     ];
 
@@ -107,26 +145,20 @@ async function main() {
 
     if (habitsError) throw habitsError;
 
-    const completions = [];
+    const completionPlan = [36, 31, 28, 27, 26, 25, 24];
 
-    habits.forEach((habit, index) => {
-        const totalDays = 75 - index * 8;
+    const completions = habits.flatMap((habit, index) => {
+        const daysSinceCreation = Math.max(
+            1,
+            Math.floor((Date.now() - new Date(habit.created_at).getTime()) / 86400000) + 1
+        );
+        const totalCompletions = completionPlan[index] ?? daysSinceCreation;
 
-        for (let i = totalDays; i >= 0; i--) {
-            const shouldSkip =
-                index === 0 ? i % 9 === 0 :
-                    index === 1 ? i % 5 === 0 :
-                        index === 2 ? i % 4 === 0 :
-                            i % 7 === 0;
-
-            if (!shouldSkip) {
-                completions.push({
-                    user_id: userId,
-                    habit_id: habit.id,
-                    completed_on: daysAgo(i),
-                });
-            }
-        }
+        return Array.from({ length: totalCompletions }, (_, dayIndex) => ({
+            user_id: userId,
+            habit_id: habit.id,
+            completed_on: daysAgo(totalCompletions - 1 - dayIndex),
+        }));
     });
 
     const { error: completionsError } = await supabase
@@ -135,11 +167,7 @@ async function main() {
 
     if (completionsError) throw completionsError;
 
-    const caughtPokemonIds = [
-        1, 4, 7, 10, 12, 16, 25, 26, 39, 52,
-        54, 58, 63, 66, 74, 92, 95, 104, 129, 133,
-        143, 147,
-    ];
+    const caughtPokemonIds = Array.from({ length: 68 }, (_, index) => index * 2 + 1);
 
     const pokemonRows = caughtPokemonIds.map((pokemon_id) => ({
         user_id: userId,

@@ -44,9 +44,13 @@ export default function MonthCalendar({
     return (
         <View style={styles.container}>
             <View style={styles.headerRow}>
-                <TouchableOpacity onPress={onPrev}><PixelText size={9}>◄</PixelText></TouchableOpacity>
-                <PixelText size={9} color={Colors.textSecondary}>{`${year} - ${pad(month)}`}</PixelText>
-                <TouchableOpacity onPress={onNext}><PixelText size={9}>►</PixelText></TouchableOpacity>
+                <TouchableOpacity onPress={onPrev} style={styles.navButton} activeOpacity={0.8} hitSlop={8}>
+                    <PixelText size={12} color={Colors.gold}>◄</PixelText>
+                </TouchableOpacity>
+                <PixelText size={10} color={Colors.textSecondary} style={styles.monthLabel}>{`${year} - ${pad(month)}`}</PixelText>
+                <TouchableOpacity onPress={onNext} style={styles.navButton} activeOpacity={0.8} hitSlop={8}>
+                    <PixelText size={12} color={Colors.gold}>►</PixelText>
+                </TouchableOpacity>
             </View>
 
             <View style={styles.weekNames}>
@@ -87,6 +91,17 @@ export default function MonthCalendar({
 const styles = StyleSheet.create({
     container: { padding: 10, borderWidth: 1, borderColor: Colors.border, backgroundColor: '#07070b' },
     headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+    navButton: {
+        minWidth: 34,
+        minHeight: 34,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#3b3b59',
+        backgroundColor: '#121224',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    monthLabel: { flex: 1, textAlign: 'center' },
     weekNames: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
     weekName: { width: `${100 / 7}%`, textAlign: 'center' },
     weekRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },

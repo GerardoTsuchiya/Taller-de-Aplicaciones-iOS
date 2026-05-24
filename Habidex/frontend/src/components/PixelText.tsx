@@ -13,7 +13,7 @@ interface Props {
   onPress?: () => void;
 }
 
-export default function PixelText({ children, size = 11, color = Colors.textMain, glow = 'none', style, onPress }: Props) {
+export default function PixelText({ children, size = 12, color = Colors.textMain, glow = 'none', style, onPress }: Props) {
   const glowStyle = glow !== 'none' ? Glow[glow] : {};
   return (
     <Text onPress={onPress} style={[styles.base, { fontSize: size, color }, glowStyle, style]}>

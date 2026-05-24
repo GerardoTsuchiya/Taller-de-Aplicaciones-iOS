@@ -18,10 +18,15 @@ export default function PokemonCell({ pokemon, onPress }: Props) {
         style={[styles.sprite, !pokemon.caught && styles.locked]}
         resizeMode="contain"
       />
-      <PixelText size={7} color={pokemon.caught ? Colors.green : '#333333'} glow={pokemon.caught ? 'green' : 'none'}>
+      <PixelText
+        size={8}
+        color={pokemon.caught ? Colors.green : '#333333'}
+        glow={pokemon.caught ? 'green' : 'none'}
+        style={styles.number}
+      >
         {numStr}
       </PixelText>
-      <PixelText size={7} color={pokemon.caught ? Colors.green : '#444444'}>
+      <PixelText size={8} color={pokemon.caught ? Colors.green : '#444444'} style={styles.name}>
         {pokemon.caught ? pokemon.name.toUpperCase() : '???'}
       </PixelText>
     </TouchableOpacity>
@@ -33,11 +38,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#0d0d18',
     borderWidth: 1,
     borderColor: Colors.border,
-    padding: 6,
+    padding: 12,
     alignItems: 'center',
-    minHeight: MIN_TOUCH,
+    minHeight: MIN_TOUCH + 36,
   },
   caught: { borderColor: '#1a3a1a' },
-  sprite: { width: 48, height: 48 },
+  sprite: { width: 72, height: 72 },
   locked: { tintColor: '#111111', opacity: 0.15 },
+  number: {
+    width: '100%',
+    textAlign: 'center',
+    lineHeight: 10,
+    marginTop: 1,
+  },
+  name: {
+    width: '100%',
+    textAlign: 'center',
+    lineHeight: 10,
+    letterSpacing: 0.2,
+  },
 });

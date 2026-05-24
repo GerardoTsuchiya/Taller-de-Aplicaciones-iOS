@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   disabled: { opacity: 0.4 },
   label: {
     fontFamily: Fonts.pixel,
-    fontSize: 10,
+    fontSize: 11,
     letterSpacing: 2,
   },
   labelPrimary: { color: '#ffffff' },

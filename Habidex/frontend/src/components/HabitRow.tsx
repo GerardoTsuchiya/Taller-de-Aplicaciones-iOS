@@ -13,14 +13,14 @@ interface Props {
 }
 
 export default function HabitRow({ habit, onPress, onComplete, onDelete }: Props) {
-  const textColor = habit.completedToday ? Colors.green : Colors.textDisabled;
+  const textColor = habit.completedToday ? Colors.green : Colors.textMain;
   const textGlow = habit.completedToday ? 'green' : 'none';
 
   return (
     <View style={[styles.row, habit.completedToday && styles.rowDone]}>
       <View style={styles.top}>
         <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.titleButton}>
-          <PixelText size={9} color={textColor} glow={textGlow as any}>► {habit.name.toUpperCase()}</PixelText>
+          <PixelText size={11} color={textColor} glow={textGlow as any}>► {habit.name.toUpperCase()}</PixelText>
         </TouchableOpacity>
         <View style={styles.actions}>
           <TouchableOpacity
@@ -29,12 +29,12 @@ export default function HabitRow({ habit, onPress, onComplete, onDelete }: Props
             activeOpacity={0.7}
             style={[styles.iconButton, habit.completedToday && styles.completeDone]}
           >
-            <PixelText size={9} color={habit.completedToday ? Colors.green : Colors.redGlow} glow={habit.completedToday ? 'green' : 'red'}>
+            <PixelText size={10} color={habit.completedToday ? Colors.green : Colors.redGlow} glow={habit.completedToday ? 'green' : 'red'}>
               ✓
             </PixelText>
           </TouchableOpacity>
           <TouchableOpacity onPress={onDelete} activeOpacity={0.7} style={[styles.iconButton, styles.deleteButton]}>
-            <PixelText size={9} color={Colors.redGlow} glow="red">×</PixelText>
+            <PixelText size={10} color={Colors.redGlow} glow="red">×</PixelText>
           </TouchableOpacity>
         </View>
       </View>
@@ -47,33 +47,39 @@ export default function HabitRow({ habit, onPress, onComplete, onDelete }: Props
 
 const styles = StyleSheet.create({
   row: {
-    backgroundColor: '#0a0a0f',
+    backgroundColor: '#1a1a2e',
     borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginBottom: 6,
-    minHeight: MIN_TOUCH,
+    borderColor: '#3a3a58',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 10,
+    minHeight: MIN_TOUCH + 16,
     justifyContent: 'center',
+    shadowColor: '#000000',
+    shadowOpacity: 0.22,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
-  rowDone: { borderColor: '#1a3a1a' },
-  top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  titleButton: { flex: 1, minHeight: 24, justifyContent: 'center', paddingRight: 8 },
-  actions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  rowDone: { borderColor: '#345f46', backgroundColor: '#18241f' },
+  top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  titleButton: { flex: 1, minHeight: 30, justifyContent: 'center', paddingRight: 10 },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   iconButton: {
-    width: 28,
-    height: 28,
+    width: 32,
+    height: 32,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#1e1e30',
-    backgroundColor: '#06060d',
+    borderColor: '#444463',
+    backgroundColor: '#202035',
+    borderRadius: 8,
   },
   completeDone: {
-    borderColor: '#1a3a1a',
+    borderColor: '#285a3a',
     backgroundColor: 'rgba(74,222,128,0.08)',
   },
   deleteButton: {
-    borderColor: '#3a0a0a',
+    borderColor: '#5a1b1b',
   },
 });

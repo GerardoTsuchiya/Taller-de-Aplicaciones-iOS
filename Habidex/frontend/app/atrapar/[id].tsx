@@ -66,26 +66,26 @@ export default function AtraparModal() {
     <View style={styles.screen}>
       <GridBackground />
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <PixelText size={11} color={Colors.redGlow} glow="red" onPress={() => router.back()}>◄ VOLVER</PixelText>
-        <PixelText size={11} color={Colors.gold} glow="gold">💰 {coins} PTS</PixelText>
+        <PixelText size={12} color={Colors.redGlow} glow="red" onPress={() => router.back()}>◄ VOLVER</PixelText>
+        <PixelText size={12} color={Colors.gold} glow="gold">💰 {coins} PTS</PixelText>
       </View>
       <View style={styles.content}>
         <View style={styles.ring}>
           <View style={styles.innerRing} />
           <Image source={{ uri: pokemon.sprite_url }} style={styles.sprite} resizeMode="contain" />
         </View>
-        <PixelText size={11} color={Colors.redGlow} glow="red" style={styles.num}>{numStr}</PixelText>
-        <PixelText size={17} color="#ffffff" style={styles.name}>{pokemon.name.toUpperCase()}</PixelText>
+        <PixelText size={13} color={Colors.redGlow} glow="red" style={styles.num}>{numStr}</PixelText>
+        <PixelText size={19} color="#ffffff" style={styles.name}>{pokemon.name.toUpperCase()}</PixelText>
         <View style={styles.types}>
           {types.map(t => (
             <View key={t} style={styles.badge}>
-              <PixelText size={8} color={Colors.redGlow}>{t.toUpperCase()}</PixelText>
+              <PixelText size={9} color={Colors.redGlow}>{t.toUpperCase()}</PixelText>
             </View>
           ))}
         </View>
-        <PixelText size={11} color={Colors.gold} glow="gold" style={styles.cost}>💰 COSTO: 50 MONEDAS</PixelText>
+        <PixelText size={12} color={Colors.gold} glow="gold" style={styles.cost}>💰 COSTO: 50 MONEDAS</PixelText>
         {coins < 50 && (
-          <PixelText size={8} color={Colors.redGlow} glow="red" style={styles.warning}>
+          <PixelText size={9} color={Colors.redGlow} glow="red" style={styles.warning}>
             MONEDAS INSUFICIENTES
           </PixelText>
         )}

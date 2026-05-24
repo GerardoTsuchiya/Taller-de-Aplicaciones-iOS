@@ -13,15 +13,15 @@ export default function HabitBar({ stat }: { stat: HabitStat }) {
   return (
     <View style={styles.row}>
       <View style={styles.top}>
-        <PixelText size={9} color={Colors.textMain}>► {stat.name.toUpperCase()}</PixelText>
-        <PixelText size={9} color={pctColor} glow={pctGlow as any}>{stat.rate}%</PixelText>
+        <PixelText size={10} color={Colors.textMain}>► {stat.name.toUpperCase()}</PixelText>
+        <PixelText size={10} color={pctColor} glow={pctGlow as any}>{stat.rate}%</PixelText>
       </View>
       <View style={styles.track}>
         <View style={[styles.fill, { width: `${Math.min(stat.rate, 100)}%`, backgroundColor: barColor }]} />
       </View>
       <View style={styles.streaks}>
-        <PixelText size={8} color="#444444">ACTUAL <PixelText size={8} color={Colors.gold}>{stat.current_streak}D</PixelText></PixelText>
-        <PixelText size={8} color="#444444">  MÁX <PixelText size={8} color={Colors.gold}>{stat.max_streak}D</PixelText></PixelText>
+        <PixelText size={9} color="#444444">ACTUAL <PixelText size={9} color={Colors.gold}>{stat.current_streak}D</PixelText></PixelText>
+        <PixelText size={9} color="#444444">  MÁX <PixelText size={9} color={Colors.gold}>{stat.max_streak}D</PixelText></PixelText>
       </View>
     </View>
   );

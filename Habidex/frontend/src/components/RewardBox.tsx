@@ -15,8 +15,8 @@ export default function RewardBox({ value, label, variant }: Props) {
   const glowColor = variant === 'gold' ? 'gold' : 'red';
   return (
     <View style={[styles.box, { borderColor, borderRightColor: variant === 'gold' ? '#403000' : '#600000', borderBottomColor: variant === 'gold' ? '#403000' : '#600000' }]}>
-      <PixelText size={17} color={valueColor} glow={glowColor as any} style={styles.value}>{value}</PixelText>
-      <PixelText size={8} color={variant === 'gold' ? '#806000' : '#600000'}>{label}</PixelText>
+      <PixelText size={19} color={valueColor} glow={glowColor as any} style={styles.value}>{value}</PixelText>
+      <PixelText size={9} color={variant === 'gold' ? '#806000' : '#600000'}>{label}</PixelText>
     </View>
   );
 }

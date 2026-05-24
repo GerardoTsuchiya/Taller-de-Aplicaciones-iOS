@@ -22,10 +22,10 @@ export default function CompletadoModal() {
       <AppHeader title="★ HABIDEX" coins={coins} />
       <View style={styles.content}>
         <View style={styles.ring}>
-          <PixelText size={32} color={Colors.green} glow="green">✓</PixelText>
+          <PixelText size={36} color={Colors.green} glow="green">✓</PixelText>
         </View>
-        <PixelText size={15} color={Colors.green} glow="green" style={styles.title}>¡COMPLETADO!</PixelText>
-        <PixelText size={9} color="#888888" style={styles.habitName}>► {habitName?.toUpperCase()}</PixelText>
+        <PixelText size={18} color={Colors.green} glow="green" style={styles.title}>¡COMPLETADO!</PixelText>
+        <PixelText size={10} color="#888888" style={styles.habitName}>► {habitName?.toUpperCase()}</PixelText>
         <View style={styles.rewards}>
           <RewardBox value={`+${coinsEarned}`} label="💰 MONEDAS" variant="gold" />
           <View style={{ width: 10 }} />

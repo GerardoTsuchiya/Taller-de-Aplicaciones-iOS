@@ -73,9 +73,9 @@ export default function RegisterScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-          <PixelText size={9} color={Colors.redGlow} glow="red">◄ REGISTRO</PixelText>
+          <PixelText size={10} color={Colors.redGlow} glow="red">◄ REGISTRO</PixelText>
         </View>
-        <PixelText size={16} glow="red" style={styles.title}>NUEVO ENTRENADOR</PixelText>
+        <PixelText size={18} glow="red" style={styles.title}>NUEVO ENTRENADOR</PixelText>
         <PixelInput label="USUARIO" value={username} onChangeText={setUsername} autoCapitalize="none" />
         <PixelInput label="CORREO" value={email} onChangeText={setEmail} keyboardType="email-address" />
         <PixelInput label="CONTRASEÑA" value={password} onChangeText={setPassword} secureTextEntry />

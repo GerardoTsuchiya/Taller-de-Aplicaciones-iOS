@@ -17,10 +17,10 @@ export default function StatBox({ value, label, glowColor }: Props) {
   };
   return (
     <View style={styles.box}>
-      <PixelText size={17} color={colorMap[glowColor]} glow={glowColor} style={styles.value}>
+      <PixelText size={19} color={colorMap[glowColor]} glow={glowColor} style={styles.value}>
         {String(value)}
       </PixelText>
-      <PixelText size={8} color="#555555">{label}</PixelText>
+      <PixelText size={9} color="#555555">{label}</PixelText>
     </View>
   );
 }

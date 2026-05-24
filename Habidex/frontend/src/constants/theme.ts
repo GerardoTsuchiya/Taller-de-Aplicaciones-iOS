@@ -10,7 +10,7 @@ export const Colors = {
   textDisabled: '#666666',
   headerBg: '#110000',
   tabBg: '#080810',
-  border: '#1e1e30',
+  border: 'rgb(30, 48, 43)',
   borderActive: '#1a1a2e',
 } as const;
 
@@ -19,12 +19,12 @@ export const Fonts = {
 } as const;
 
 export const FontSizes = {
-  logo: 20,
-  title: 15,
-  label: 11,
-  value: 17,
-  small: 9,
-  tiny: 8,
+  logo: 22,
+  title: 17,
+  label: 12,
+  value: 19,
+  small: 10,
+  tiny: 9,
 } as const;
 
 export const Glow = {

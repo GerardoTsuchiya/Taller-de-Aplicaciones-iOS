@@ -120,7 +120,7 @@ export default function HabitsScreen() {
         contentContainerStyle={styles.list}
         ListHeaderComponent={
           <>
-            <PixelText size={10} color={Colors.textMain} style={styles.date}>{dateStr}</PixelText>
+            <PixelText size={11} color={Colors.textMain} style={styles.date}>{dateStr}</PixelText>
             <StreakBox streak={maxStreak} />
             <PixelButton
               label="► NUEVO HÁBITO"
@@ -138,7 +138,7 @@ export default function HabitsScreen() {
           />
         )}
         ListEmptyComponent={
-          <PixelText size={9} color={Colors.textDisabled} style={styles.empty}>
+          <PixelText size={10} color={Colors.textDisabled} style={styles.empty}>
             SIN HÁBITOS.{'\n'}TOCA NUEVO HÁBITO.
           </PixelText>
         }

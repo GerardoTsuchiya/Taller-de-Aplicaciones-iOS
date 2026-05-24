@@ -11,7 +11,7 @@ const tabLabel = (label: string, focused: boolean) => (
 );
 
 const tabIcon = (name: keyof typeof Ionicons.glyphMap, color: string) => (
-  <Ionicons name={name} size={18} color={color} />
+  <Ionicons name={name} size={25} color={color} />
 );
 
 export default function TabsLayout() {

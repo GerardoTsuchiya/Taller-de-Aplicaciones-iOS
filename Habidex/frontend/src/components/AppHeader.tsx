@@ -15,9 +15,9 @@ export default function AppHeader({ title, coins, right }: Props) {
 
   return (
     <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-      <PixelText size={13} glow="red">{title}</PixelText>
+      <PixelText size={15} glow="red">{title}</PixelText>
       {coins !== undefined && (
-        <PixelText size={11} color={Colors.gold} glow="gold">💰 {coins} PTS</PixelText>
+        <PixelText size={12} color={Colors.gold} glow="gold">💰 {coins} PTS</PixelText>
       )}
       {right}
     </View>

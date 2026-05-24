@@ -12,8 +12,8 @@ import PokemonCell from '@/components/PokemonCell';
 import PixelText from '@/components/PixelText';
 
 const NUM_COLS = 3;
-const CELL_GAP = 4;
-const PADDING = 12;
+const CELL_GAP = 10;
+const PADDING = 14;
 const cellWidth = (Dimensions.get('window').width - PADDING * 2 - CELL_GAP * (NUM_COLS - 1)) / NUM_COLS;
 
 export default function PokedexScreen() {
@@ -52,8 +52,8 @@ export default function PokedexScreen() {
         columnWrapperStyle={styles.row}
         ListHeaderComponent={
           <View style={styles.header}>
-            <PixelText size={13} color="#ffffff" glow="red">GEN I</PixelText>
-            <PixelText size={9} color={Colors.green} glow="green">✓ {caught}/151</PixelText>
+            <PixelText size={15} color="#ffffff" glow="red">GEN I</PixelText>
+            <PixelText size={10} color={Colors.green} glow="green">✓ {caught}/151</PixelText>
           </View>
         }
         renderItem={({ item }) => (

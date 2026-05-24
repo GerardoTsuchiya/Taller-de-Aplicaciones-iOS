@@ -51,17 +51,17 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-          <PixelText size={13} glow="red">★ HABIDEX</PixelText>
+          <PixelText size={15} glow="red">★ HABIDEX</PixelText>
         </View>
         <View style={styles.logoArea}>
-          <PixelText size={20} glow="red" style={styles.logoText}>★ HABIDEX ★</PixelText>
-          <PixelText size={9} color={Colors.redGlow} glow="red" style={styles.logoSub}>HABIT TRAINER</PixelText>
+          <PixelText size={24} glow="red" style={styles.logoText}>★ HABIDEX ★</PixelText>
+          <PixelText size={10} color={Colors.redGlow} glow="red" style={styles.logoSub}>HABIT TRAINER</PixelText>
         </View>
         <PixelInput label="USUARIO O CORREO" value={identifier} onChangeText={setIdentifier} autoCapitalize="none" />
         <PixelInput label="CONTRASEÑA" value={password} onChangeText={setPassword} secureTextEntry />
         <PixelButton label="► INICIAR SESIÓN" onPress={handleLogin} disabled={loading} style={styles.btnTop} />
-        <PixelText size={9} color="#1e1e30" style={styles.divider}>── ─ ──</PixelText>
-        <PixelText size={9} color="#5a5a7a" style={styles.regText}>¿NO TIENES CUENTA?</PixelText>
+        <PixelText size={10} color="#1e1e30" style={styles.divider}>── ─ ──</PixelText>
+        <PixelText size={10} color="#5a5a7a" style={styles.regText}>¿NO TIENES CUENTA?</PixelText>
         <PixelButton label="► REGISTRARSE" onPress={() => router.push('/(auth)/register')} variant="outline" />
       </ScrollView>
     </View>

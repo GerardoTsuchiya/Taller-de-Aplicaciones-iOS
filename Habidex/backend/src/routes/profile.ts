@@ -88,7 +88,7 @@ profileRouter.get('/analytics', authenticate, async (req: Request, res: Response
       1,
       Math.floor((Date.now() - new Date(habit.created_at).getTime()) / 86400000) + 1
     );
-    const rate = Math.min(100, Math.round((dates.length / daysSinceCreation) * 100));
+    const rate = Math.round((dates.length / daysSinceCreation) * 100);
 
     return {
       id: habit.id,

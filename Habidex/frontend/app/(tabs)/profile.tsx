@@ -51,10 +51,10 @@ export default function ProfileScreen() {
       <AppHeader title="★ HABIDEX" coins={coins} />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.avatarRow}>
-          <View style={styles.avatar}><PixelText size={24}>🎮</PixelText></View>
+          <View style={styles.avatar}><PixelText size={28}>🎮</PixelText></View>
           <View>
-            <PixelText size={9} color={Colors.textDisabled}>ENTRENADOR</PixelText>
-            <PixelText size={15} color="#ffffff" style={{ marginTop: 4 }}>
+            <PixelText size={10} color={Colors.textDisabled}>ENTRENADOR</PixelText>
+            <PixelText size={18} color="#ffffff" style={{ marginTop: 4 }}>
               {(profile?.username ?? user?.username ?? '---').toUpperCase()}
             </PixelText>
           </View>
@@ -71,7 +71,7 @@ export default function ProfileScreen() {
           <StatBox value={`${caught}/151`} label="POKÉDEX" glowColor="gold" />
         </View>
 
-        <PixelText size={9} color={Colors.textSecondary} style={styles.progLabel}>
+        <PixelText size={10} color={Colors.textSecondary} style={styles.progLabel}>
           POKÉDEX: {caught} / 151
         </PixelText>
         <View style={styles.progTrack}>

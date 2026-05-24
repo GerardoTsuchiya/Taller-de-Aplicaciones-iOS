@@ -120,14 +120,14 @@ export default function StatsScreen() {
       <GridBackground />
       <AppHeader title="★ ANALYTICS" coins={coins} />
       <ScrollView contentContainerStyle={styles.scroll}>
-        <PixelText size={9} color={Colors.textSecondary} style={styles.secLabel}>▸ CALENDARIO GENERAL</PixelText>
+        <PixelText size={10} color={Colors.textSecondary} style={styles.secLabel}>▸ CALENDARIO GENERAL</PixelText>
 
         <View style={styles.calendarCard}>
           <View style={styles.calendarHeader}>
-            <PixelText size={9} color={Colors.textSecondary}>
+            <PixelText size={10} color={Colors.textSecondary}>
               {monthName(displayYear, displayMonth)}
             </PixelText>
-            <PixelText size={8} color={Colors.textDisabled}>
+            <PixelText size={9} color={Colors.textDisabled}>
               {doneDates.length} DÍAS COMPLETOS
             </PixelText>
           </View>
@@ -145,34 +145,34 @@ export default function StatsScreen() {
           {loadingCalendar ? (
             <ActivityIndicator color={Colors.red} style={{ marginTop: 10 }} />
           ) : doneDates.length === 0 ? (
-            <PixelText size={8} color={Colors.textDisabled} style={styles.emptyHistory}>
+            <PixelText size={9} color={Colors.textDisabled} style={styles.emptyHistory}>
               NO HAY DÍAS EN LOS QUE COMPLETASTE TODAS LAS ACTIVIDADES.
             </PixelText>
           ) : null}
         </View>
 
-        <PixelText size={8} color={Colors.textSecondary} style={styles.period}>ÚLT. 30 DÍAS</PixelText>
+        <PixelText size={9} color={Colors.textSecondary} style={styles.period}>ÚLT. 30 DÍAS</PixelText>
 
         <View style={styles.comboRow}>
           <DonutChart pct={overall} size={90} />
           <View style={styles.chips}>
             <View style={styles.chip}>
-              <PixelText size={15} color={Colors.gold} glow="gold">{totalHabits}</PixelText>
-              <PixelText size={7} color="#444444">HÁBITOS TOTAL</PixelText>
+              <PixelText size={18} color={Colors.gold} glow="gold">{totalHabits}</PixelText>
+              <PixelText size={8} color="#444444">HÁBITOS TOTAL</PixelText>
             </View>
             <View style={[styles.chip, { marginTop: 6 }]}>
-              <PixelText size={15} color={Colors.redGlow} glow="red">🔥 {maxStreak}</PixelText>
-              <PixelText size={7} color="#444444">RACHA ACTUAL</PixelText>
+              <PixelText size={18} color={Colors.redGlow} glow="red">🔥 {maxStreak}</PixelText>
+              <PixelText size={8} color="#444444">RACHA ACTUAL</PixelText>
             </View>
           </View>
         </View>
 
-        <PixelText size={9} color={Colors.textSecondary} style={styles.secLabel}>▸ POR HÁBITO</PixelText>
+        <PixelText size={10} color={Colors.textSecondary} style={styles.secLabel}>▸ POR HÁBITO</PixelText>
 
         {analytics?.habits.map(h => <HabitBar key={h.id} stat={h} />)}
 
         {analytics?.habits.length === 0 && (
-          <PixelText size={9} color={Colors.textDisabled} style={styles.empty}>
+          <PixelText size={10} color={Colors.textDisabled} style={styles.empty}>
             SIN DATOS AÚN.
           </PixelText>
         )}

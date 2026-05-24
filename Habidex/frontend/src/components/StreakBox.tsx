@@ -6,8 +6,8 @@ import PixelText from './PixelText';
 export default function StreakBox({ streak }: { streak: number }) {
   return (
     <View style={styles.box}>
-      <PixelText size={9} color={Colors.redGlow} glow="red">🔥 RACHA</PixelText>
-      <PixelText size={9} color={Colors.gold} glow="gold">{streak} DÍAS</PixelText>
+      <PixelText size={12} color={Colors.redGlow} glow="red">🔥 RACHA</PixelText>
+      <PixelText size={12} color={Colors.gold} glow="gold">{streak} DÍAS</PixelText>
     </View>
   );
 }

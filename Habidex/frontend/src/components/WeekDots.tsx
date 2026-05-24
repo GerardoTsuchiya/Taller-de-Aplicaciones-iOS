@@ -20,7 +20,7 @@ export default function WeekDots({ streak, done }: Props) {
             styles.dot,
             i < filled
               ? { backgroundColor: dotColor, shadowColor: glowColor, shadowRadius: 4, shadowOpacity: 1, shadowOffset: { width: 0, height: 0 } }
-              : { backgroundColor: '#181828' },
+              : { backgroundColor: '#3a3a55', borderWidth: 1, borderColor: '#585874' },
           ]}
         />
       ))}
