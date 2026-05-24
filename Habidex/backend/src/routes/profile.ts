@@ -48,6 +48,8 @@ profileRouter.get('/', authenticate, async (req: Request, res: Response) => {
 // GET /analytics
 profileRouter.get('/analytics', authenticate, async (req: Request, res: Response) => {
   const userId = req.user!.sub;
+  const today = new Date().toISOString().slice(0, 10);
+  const thirtyDaysAgo = new Date(Date.now() - 29 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   const { data: habits, error: habitsError } = await supabase
     .from('habits')
@@ -84,25 +86,22 @@ profileRouter.get('/analytics', authenticate, async (req: Request, res: Response
 
   const habitStats = habits.map((habit: { id: string; name: string; created_at: string }) => {
     const dates = completionsByHabit.get(habit.id) ?? [];
-    const daysSinceCreation = Math.max(
-      1,
-      Math.floor((Date.now() - new Date(habit.created_at).getTime()) / 86400000) + 1
-    );
-    const rate = Math.round((dates.length / daysSinceCreation) * 100);
+    const recentDates = dates.filter((date) => date >= thirtyDaysAgo && date <= today);
+    const rate = Math.round((recentDates.length / 30) * 100);
 
     return {
       id: habit.id,
       name: habit.name,
-      completions: dates.length,
+      completions: recentDates.length,
       rate,
       current_streak: calculateStreak(dates),
       max_streak: calculateMaxStreak(dates),
     };
   });
 
-  const overallRate = Math.round(
-    habitStats.reduce((sum: number, h: { rate: number }) => sum + h.rate, 0) / habitStats.length
-  );
+  const overallRate = habitStats.length > 0
+    ? Math.round(habitStats.reduce((sum: number, h: { rate: number }) => sum + h.rate, 0) / habitStats.length)
+    : 0;
 
   res.json({
     total_habits: habits.length,

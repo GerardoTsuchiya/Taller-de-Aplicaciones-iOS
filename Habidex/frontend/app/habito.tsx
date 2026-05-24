@@ -272,7 +272,6 @@ export default function HabitFormModal() {
           label="NOMBRE"
           value={name}
           onChangeText={setName}
-          pixelFont
         />
 
         <View style={styles.field}>

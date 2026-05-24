@@ -9,10 +9,9 @@ interface Props {
   secureTextEntry?: boolean;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   keyboardType?: 'default' | 'email-address';
-  pixelFont?: boolean;
 }
 
-export default function PixelInput({ label, value, onChangeText, secureTextEntry, autoCapitalize = 'none', keyboardType = 'default', pixelFont = false }: Props) {
+export default function PixelInput({ label, value, onChangeText, secureTextEntry, autoCapitalize = 'none', keyboardType = 'default' }: Props) {
   return (
     <View style={styles.wrapper}>
       <Text style={styles.label}>{label}</Text>
@@ -22,7 +21,7 @@ export default function PixelInput({ label, value, onChangeText, secureTextEntry
         secureTextEntry={secureTextEntry}
         autoCapitalize={autoCapitalize}
         keyboardType={keyboardType}
-        style={[styles.input, pixelFont && styles.pixelInput]}
+        style={styles.input}
         placeholderTextColor={Colors.textDisabled}
         cursorColor={Colors.red}
         selectionColor={Colors.red}
@@ -49,11 +48,8 @@ const styles = StyleSheet.create({
     minHeight: MIN_TOUCH,
     color: Colors.textMain,
     padding: 14,
+    fontFamily: Fonts.pixel,
     fontSize: 10,
     letterSpacing: 1,
-  },
-  pixelInput: {
-    fontFamily: Fonts.pixel,
-    fontSize: 9,
   },
 });

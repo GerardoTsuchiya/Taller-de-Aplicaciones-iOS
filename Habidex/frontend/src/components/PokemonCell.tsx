@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   caught: { borderColor: '#1a3a1a' },
   sprite: { width: 72, height: 72 },
-  locked: { tintColor: '#111111', opacity: 0.15 },
+  locked: { tintColor: '#4da3ff', opacity: 0.5 },
   number: {
     width: '100%',
     textAlign: 'center',
