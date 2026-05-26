@@ -14,6 +14,7 @@ export default function PokemonCell({ pokemon, onPress }: Props) {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.cell, pokemon.caught && styles.caught]} activeOpacity={0.7}>
       <Image
+        key={`${pokemon.id}-${pokemon.caught ? 'caught' : 'locked'}`}
         source={{ uri: pokemon.sprite_url }}
         style={[styles.sprite, !pokemon.caught && styles.locked]}
         resizeMode="contain"

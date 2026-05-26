@@ -16,10 +16,13 @@ export const isUnauthorizedError = (error: unknown) =>
 
 export async function apiFetch(path: string, options: RequestInit = {}) {
   const token = useAuthStore.getState().token;
+  const method = (options.method ?? 'GET').toUpperCase();
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
+    cache: method === 'GET' ? 'no-store' : options.cache,
     headers: {
       'Content-Type': 'application/json',
+      ...(method === 'GET' ? { 'Cache-Control': 'no-cache' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },

@@ -44,7 +44,7 @@ export default function AtraparModal() {
       Alert.alert(
         '¡ATRAPADO!',
         `${pokemon.name.toUpperCase()} fue capturado.\nMonedas restantes: ${result.remaining_coins}`,
-        [{ text: 'OK', onPress: () => router.back() }]
+        [{ text: 'OK', onPress: () => router.replace('/(tabs)/pokedex') }]
       );
       setCoins(result.remaining_coins);
     } catch (e: any) {
